@@ -2,17 +2,17 @@
 '''CLI entry point.'''
 
 from src.cli.auth import Auth
-from src.cli.config import Config_
+from src.cli.list import List
 
 import fire
 
-class M3(object):
-  '''Entry point to m3 command line application'''
+class M3:
+  '''Entry point to m3 CLI'''
 
   def __init__(self):
     self.auth = Auth()
-    self.export = Auth()
-    self.config = Config_.create()
+    self.list = List()
 
 if __name__ == '__main__':
+  fire.core.Display = lambda lines, out: print(*lines, file=out)
   fire.Fire(M3)
