@@ -2,6 +2,9 @@
 
 .vscode/
 
+__pycache__
+
 venv/
 
-__pycache__
+m3.json
+*m3.json.swp
