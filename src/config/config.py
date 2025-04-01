@@ -1,13 +1,14 @@
 '''Dataclass wrapper for handling the user's m3.json project configuration'''
 
-from dataclasses import dataclass, make_dataclass
-from src.config.project_paths import ProjectPaths
-
 import os
 import json
 
 from pathlib import Path
 from typing import Optional, Self
+
+from dataclasses import dataclass
+from src.config.project_paths import ProjectPaths
+
 
 CONFIG_FILENAME = 'm3.json'
 
