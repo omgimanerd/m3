@@ -55,7 +55,7 @@ class Config:
       except json.decoder.JSONDecodeError as exc:
         raise M3Exception(f'Found malformed config file at {path}') from exc
       except TypeError as exc:
-        raise M3Exception(f'Invalid m3.json found at {path}') from exc
+        raise M3Exception(f'Invalid {CONFIG_FILENAME} found at {path}') from exc
 
   def write(self):
     '''Writes the state of this config object to the config file.'''
