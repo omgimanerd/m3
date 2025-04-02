@@ -27,9 +27,8 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
           mod_id (int): The Mod ID for the mod metadata to be fetched
 
         Returns:
-          CFGetModData:
-            Object containing CFGetModResponse object or None, statusCode of API request,
-            and status containing status or error message.
+            An object containing CFGetModResponse object or None, statusCode of
+            API request, and status containing status or error message.
         """
 
         try:
@@ -47,10 +46,12 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             mod_data = CFGetModResponse(**response.json())
         except requests.exceptions.HTTPError as err:
             raise FireError(
-                f'A problem occurred while querying the CurseForge API for mod {mod_id}') from err
+                'A problem occurred while querying the CurseForge API for ' +
+                f'mod {mod_id}') from err
         except requests.exceptions.RequestException as err:
             raise FireError(
-                f'A problem occurred while querying the CurseForge API for mod {mod_id}') from err
+                'A problem occurred while querying the CurseForge API for ' +
+                f'mod {mod_id}') from err
         except JSONDecodeError as err:
             raise FireError(
                 f'Failed to decode JSON payload for mod {mod_id}') from err
@@ -59,4 +60,6 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
                 f'Failed to process API response for mod {mod_id}') from err
 
         return CFDataResponse(
-            payload=mod_data, status_code=response.status_code, status=response.reason)
+            payload=mod_data, status_code=response.status_code,
+            status=response.reason
+        )
