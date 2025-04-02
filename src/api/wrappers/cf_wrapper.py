@@ -31,28 +31,26 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             Object containing CFGetModResponse object or None, statusCode of API request,
             and status containing status or error message.
         """
-        get_mod_endpoint = 'mods'
-        request_path = Path(CF_API_VERSION).joinpath(
-            get_mod_endpoint, str(mod_id))
-        request_url = urljoin(CF_BASE_URL, str(request_path))
-
-        headers = {
-            'Accept': 'application/json',
-            'x-api-key': self.api_key
-        }
 
         try:
-            response = requests.get(request_url, headers=headers,
-                                    timeout=10)  # 10 second timeout
+            get_mod_endpoint = 'mods'
+            request_path = Path(CF_API_VERSION).joinpath(
+                get_mod_endpoint, str(mod_id))
+            request_url = urljoin(CF_BASE_URL, str(request_path))
+
+            headers = {
+                'Accept': 'application/json',
+                'x-api-key': self.api_key
+            }
+
+            response = requests.get(request_url, headers=headers, timeout=10)
+            mod_data = CFGetModResponse(**response.json())
         except requests.exceptions.HTTPError as err:
             raise FireError(
                 f'A problem occurred while querying the CurseForge API for mod {mod_id}') from err
         except requests.exceptions.RequestException as err:
             raise FireError(
                 f'A problem occurred while querying the CurseForge API for mod {mod_id}') from err
-
-        try:
-            mod_data = CFGetModResponse(**response.json())
         except JSONDecodeError as err:
             raise FireError(
                 f'Failed to decode JSON payload for mod {mod_id}') from err
