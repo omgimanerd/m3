@@ -1,7 +1,18 @@
-import fire
-import requests
+"""A wrapper class for the CurseForge API.
+"""
+
 from json.decoder import JSONDecodeError
-from src.api.dataclasses.cf_response_objects import CFGetModResponse, CFGetModData, CFDataResponse
+from pathlib import Path
+from urllib.parse import urljoin
+
+import requests
+from fire.core import FireError
+
+from src.api.dataclasses.cf_response_objects import (CFDataResponse,
+                                                     CFGetModResponse)
+
+CF_BASE_URL = 'https://api.curseforge.com'
+CF_API_VERSION = 'v1'
 
 
 class CurseForgeWrapper:
@@ -17,17 +28,22 @@ class CurseForgeWrapper:
     Parameters:
     mod_id (int): The Mod ID for the mod metadata to be fetched
 
-        Returns:
-        CFGetModData: Object containing mod metadata
-        """
-        get_mod_url = f'https://api.curseforge.com/v1/mods/{mod_id}'
-        headers = {
-            'Accept': 'application/json',
-            'x-api-key': self.api_key
-        }
+    Returns:
+      CFGetModData:
+        Object containing CFGetModResponse object or None, statusCode of API request,
+        and status containing status or error message.
+    """
+    get_mod_endpoint = 'mods'
+    request_path = Path(CF_API_VERSION).joinpath(get_mod_endpoint, str(mod_id))
+    request_url = urljoin(CF_BASE_URL, str(request_path))
+
+    headers = {
+        'Accept': 'application/json',
+        'x-api-key': self.api_key
+    }
 
     try:
-      response = requests.get(get_mod_url, headers=headers,
+      response = requests.get(request_url, headers=headers,
                               timeout=10)  # 10 second timeout
     except requests.exceptions.HTTPError as err:
       raise FireError(
