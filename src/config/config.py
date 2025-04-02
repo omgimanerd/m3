@@ -1,48 +1,53 @@
 """Dataclass wrapper for handling the user's m3 project configuration"""
 
 import json
-from dataclasses import dataclass
+import os
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Optional, Self
 
+from dataclasses_json import dataclass_json
 from fire.core import FireError
 
+from src.util.dataclasses import PathField
 from src.util.enum import Platform
 from src.util.paths import walk_up_search
 
 CONFIG_FILENAME = 'm3.json'
 
 
+@dataclass_json
 @dataclass
 class ProjectPaths:
   """Dataclass for representing paths to the directories for assets that m3
   should manage."""
-  mods: Path = Path('mods')
-  resourcepacks: Path = Path('resourcepacks')
-  texturepacks: Path = Path('texturepacks')
-  shaderpacks: Path = Path('shaderpacks')
+  mods: Path = field(**PathField('mods'))
+  resourcepacks: Path = field(**PathField('resourcepacks'))
+  texturepacks: Path = field(**PathField('texturepacks'))
+  shaderpacks: Path = field(**PathField('shaderpacks'))
 
 
 @dataclass
 class Config:
   """Dataclass container for the user's m3.json project configuration."""
   # The name of the project
-  name: str = None
+  name: str
   # The version of the project
-  version: str = None
-  authors: list[str] = None
-
+  version: str
   # CurseForge or Modrinth
-  platform: Platform = None
+  platform: Platform
+
+  authors: list[str] = field(default_factory=lambda: [])
 
   # Paths to assets that m3 can manage relative to the m3.json
-  paths: ProjectPaths = None
+  paths: ProjectPaths = field(default_factory=ProjectPaths)
 
   # Path to build the output to.
-  output: Path = None
+  output: Path = field(**PathField('output'))
 
   # The path of the config file this object represents.
-  _path: Path = None
+  _path: Path = field(default_factory=lambda: Path(
+    os.getcwd()) / CONFIG_FILENAME)
 
   @staticmethod
   def factory(config):
@@ -74,4 +79,4 @@ class Config:
   def write(self):
     """Writes the state of this config object to the config file."""
     with open(self._path, 'w', encoding='utf-8') as f:
-      f.write(json.dumps(self, indent=2))
+      f.write(json.dumps(asdict(self, dict_factory=Config.factory), indent=2))

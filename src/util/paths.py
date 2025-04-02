@@ -22,4 +22,4 @@ def walk_up_search(filename: str) -> Optional[Path]:
     filepath = current / filename
     if filepath.exists():
       return filepath
-    filepath = filepath.parent
+    current = current.parent
