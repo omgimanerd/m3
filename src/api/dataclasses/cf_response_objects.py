@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import Optional
+from typing import Union
 
 
 @dataclass
@@ -33,3 +35,18 @@ class CFGetModResponse:
     Format for CurseForge "Get Mod" response
     """
     data: list[CFGetModData]
+
+
+@dataclass
+class CFDataResponse:
+    '''
+    Data object for CurseForge API calls.
+
+    The payload contains the data from the API call.
+    The statusCode optionally contains the HTTP status code.
+    The status optionally contains either an explanation of the status code corresponding to response.reason
+    or an explanation of a non-HTTP error that occurred.
+    '''
+    payload: CFGetModResponse
+    statusCode: Optional[int]
+    status: Optional[str]
