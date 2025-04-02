@@ -2,4 +2,4 @@
 
 
 class Uninstall:
-  pass
+    pass

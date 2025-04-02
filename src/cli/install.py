@@ -2,4 +2,4 @@
 
 
 class Install:
-  pass
+    pass

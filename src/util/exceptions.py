@@ -2,7 +2,7 @@
 
 
 class M3Exception(Exception):
-  """Generic exception encapsulator."""
+    """Generic exception encapsulator."""
 
-  def __init__(self, message):
-    super().__init__(message)
+    def __init__(self, message):
+        super().__init__(message)
