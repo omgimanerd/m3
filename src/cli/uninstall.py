@@ -1,4 +1,5 @@
-'''uninstall subcommand module'''
+"""uninstall subcommand module"""
+
 
 class Uninstall:
   pass

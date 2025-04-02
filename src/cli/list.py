@@ -1,4 +1,5 @@
-'''list subcommand module'''
+"""list subcommand module"""
+
 
 class List:
   pass

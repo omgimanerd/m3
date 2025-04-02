@@ -1,34 +1,32 @@
-'''Dataclass wrapper for handling m3's lockfile'''
+"""Dataclass wrapper for handling m3's lockfile"""
 
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Self
 
-import json
-
 from fire.core import FireError
-
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
 
 @dataclass
 class LockfileEntries:
-  '''Dataclass wrapper for handling lockfile entries.'''
+  """Dataclass wrapper for handling lockfile entries."""
   name: str
   hash: str
 
 
 @dataclass
 class Lockfile:
-  '''Dataclass wrapper for handling m3's lockfile'''
+  """Dataclass wrapper for handling m3's lockfile"""
   lockfileentries: list[LockfileEntries]
   _path: Path
 
   @staticmethod
   def create(path: Path) -> Optional[Self]:
-    '''Factory method that attempts to construct a lockfile dataclass using
+    """Factory method that attempts to construct a lockfile dataclass using
     the lockfile in the given directory, returns None if there was no lockfile
     found.
 
@@ -38,7 +36,7 @@ class Lockfile:
     Returns:
       A Lockfile dataclass instance, or throws an FireError if an invalid
       lockfile was found.
-    '''
+    """
     filepath = path / LOCKFILE_FILENAME
     if not filepath.exists():
       return None
@@ -52,6 +50,6 @@ class Lockfile:
         f'Invalid {LOCKFILE_FILENAME} found at {filepath}') from e
 
   def write(self):
-    '''Writes the state of this lockfile object to the file.'''
+    """Writes the state of this lockfile object to the file."""
     with open(self._path, 'w', encoding='utf-8') as f:
       f.write(json.dumps(self, indent=2))

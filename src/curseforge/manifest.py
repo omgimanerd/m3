@@ -1,33 +1,37 @@
-'''Dataclass representing the Curseforge manifest.json file.'''
+"""Dataclass representing the Curseforge manifest.json file."""
 
 from dataclasses import dataclass
 
+
 @dataclass
 class Files:
-  '''files subfield.'''
+  """files subfield."""
   # pylint: disable=invalid-name
   fileID: int
   # pylint: disable=invalid-name
   projectID: int
   required: bool
 
+
 @dataclass
 class Loader:
-  '''modloaders subfield'''
+  """modloaders subfield"""
   id: str
   primary: bool
 
+
 @dataclass
 class Minecraft:
-  '''minecraft subfield'''
+  """minecraft subfield"""
   # pylint: disable=invalid-name
   modLoaders: list[Loader]
   # Minecraft version
   version: str
 
+
 @dataclass
 class Manifest:
-  '''Parent manifest.'''
+  """Parent manifest."""
   author: str
   files: list[Files]
 

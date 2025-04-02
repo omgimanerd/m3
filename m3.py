@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-'''CLI entry point.'''
+"""CLI entry point."""
 
 import fire
 
-
 from src.cli.auth import Auth
-from src.cli.list import List
 from src.cli.init import Init
+from src.cli.list import List
 
 
 class M3:
-  '''Entry point to m3 CLI'''
+  """Entry point to m3 CLI"""
 
   def __init__(self):
     self.auth = Auth()
+
     self.list = List()
     self.init = Init()
 

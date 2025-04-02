@@ -1,12 +1,12 @@
-'''Utility file with path manipulation functions.'''
+"""Utility file with path manipulation functions."""
 
 import os
-
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
-def walk_up_search(filename:str) -> Optional[Path]:
-  '''Walks up from the current execution context looking for a given
+
+def walk_up_search(filename: str) -> Optional[Path]:
+  """Walks up from the current execution context looking for a given
   filename.
 
   Args:
@@ -14,7 +14,7 @@ def walk_up_search(filename:str) -> Optional[Path]:
 
   Returns:
     The path to the file, if found, or None.
-  '''
+  """
   current = Path(os.getcwd())
   while True:
     if str(current) == current.root:

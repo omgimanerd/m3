@@ -1,4 +1,5 @@
-'''import subcommand module'''
+"""import subcommand module"""
+
 
 class Import:
   pass

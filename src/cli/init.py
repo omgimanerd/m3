@@ -1,4 +1,5 @@
-'''init subcommand module'''
+"""init subcommand module"""
+
 
 class Init:
   pass

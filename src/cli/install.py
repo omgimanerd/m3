@@ -1,4 +1,5 @@
-'''install subcommand module'''
+"""install subcommand module"""
+
 
 class Install:
   pass

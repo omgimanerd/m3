@@ -1,2 +1,1 @@
-'''status subcommand module'''
-
+"""status subcommand module"""
