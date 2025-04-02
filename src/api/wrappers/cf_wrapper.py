@@ -1,5 +1,4 @@
-"""A wrapper class for the CurseForge API.
-"""
+"""A wrapper class for the CurseForge API."""
 
 from json.decoder import JSONDecodeError
 from pathlib import Path
@@ -22,8 +21,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
         self.api_key = api_key
 
     def get_mod(self, mod_id: int) -> CFDataResponse:
-        """
-        Return CFGetModData object containing mod metadata
+        """Return CFGetModData object containing mod metadata.
 
         Parameters:
           mod_id (int): The Mod ID for the mod metadata to be fetched
