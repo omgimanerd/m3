@@ -31,6 +31,7 @@ class CFGetModData:
     dateModified: str
     allowModDistribution: bool
     isAvailable: bool
+    # pylint: enable=invalid-name
 
 
 @dataclass
