@@ -1,8 +1,12 @@
 """auth subcommand module"""
 
-import os
+from src.api.apikey import set_api_key
 
 
+# pylint: disable-next=too-few-public-methods
 class Auth:
-  """Sets the Curseforge API key"""
-  pass
+  """Sets the CurseForge API key."""
+
+  def set(self, apikey):
+    """Set the CurseForge API key."""
+    set_api_key(apikey=apikey)
