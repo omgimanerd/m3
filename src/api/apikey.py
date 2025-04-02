@@ -38,7 +38,8 @@ def set_api_key(apikey: str):
   """Sets the CurseForge API key from the credentials file."""
   authfile = _get_m3_dir() / AUTH_FILE
   try:
-    with open(authfile, 'w', encoding='utf-8') as f:
+    with open(authfile, 'w+', encoding='utf-8') as f:
       f.write(apikey)
+    os.chmod(authfile, 0o600)
   except Exception as e:
     raise FireError(f'Unable to write {authfile}') from e
