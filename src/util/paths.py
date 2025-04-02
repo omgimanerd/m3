@@ -6,8 +6,7 @@ from typing import Optional
 
 
 def walk_up_search(filename: str) -> Optional[Path]:
-    """Walks up from the current execution context looking for a given
-    filename.
+    """Walks up from the current execution context looking for a given filename.
 
     Args:
         filename: the filename to search for in parent directories.

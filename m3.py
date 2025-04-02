@@ -9,15 +9,15 @@ from src.cli.list import List
 
 
 class M3:
-  """Entry point to m3 CLI"""
+    """Entry point to m3 CLI"""
 
-  def __init__(self):
-    self.auth = Auth()
+    def __init__(self):
+        self.auth = Auth()
 
-    self.list = List()
-    self.init = Init()
+        self.list = List()
+        self.init = Init()
 
 
 if __name__ == '__main__':
-  fire.core.Display = lambda lines, out: print(*lines, file=out)
-  fire.Fire(M3)
+    fire.core.Display = lambda lines, out: print(*lines, file=out)
+    fire.Fire(M3)
