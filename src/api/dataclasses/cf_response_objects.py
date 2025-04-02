@@ -1,5 +1,4 @@
-"""Dataclasses for the CurseForge API to process response data.
-"""
+"""Dataclasses for the CurseForge API to process response data."""
 from dataclasses import dataclass
 from typing import Optional
 
@@ -7,8 +6,10 @@ from typing import Optional
 @dataclass
 # pylint: disable=too-many-instance-attributes
 class CFGetModData:
-    """
-    Metadata for CurseForge Mod
+    """Metadata for CurseForge Mod
+
+    Describes the data returned by the CurseForge API, 
+    follows naming convention of the API response.
     """
     id: int
     # pylint: disable=invalid-name
@@ -34,22 +35,24 @@ class CFGetModData:
 
 @dataclass
 class CFGetModResponse:
-    """
-    Format for CurseForge "Get Mod" response
+    """Format for CurseForge "Get Mod" response.
+
+    See documentation for endpoint here:
+    https://docs.curseforge.com/rest-api/?python#get-mod
     """
     data: list[CFGetModData]
 
 
 @dataclass
 class CFDataResponse:
-    '''
-    Data object for CurseForge API calls.
+    """Data object for CurseForge API calls.
 
     The payload contains the data from the API call.
     The statusCode optionally contains the HTTP status code.
-    The status optionally contains either an explanation of the status code corresponding to response.reason
-    or an explanation of a non-HTTP error that occurred.
-    '''
+    The status optionally contains either an explanation of the 
+    status code corresponding to response.reason or an explanation of 
+    a non-HTTP error that occurred.
+    """
     payload: CFGetModResponse
     status_code: Optional[int]
     status: Optional[str]
