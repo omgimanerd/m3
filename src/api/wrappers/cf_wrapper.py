@@ -27,7 +27,8 @@ class CurseForgeWrapper:
         }
 
     try:
-      response = requests.get(get_mod_url, headers=headers)
+      response = requests.get(get_mod_url, headers=headers,
+                              timeout=10)  # 10 second timeout
     except requests.exceptions.HTTPError as err:
       raise FireError(
         f'A problem occurred while querying the CurseForge API for mod {mod_id}') from err
