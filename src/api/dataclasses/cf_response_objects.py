@@ -1,14 +1,17 @@
+"""Dataclasses for the CurseForge API to process response data.
+"""
 from dataclasses import dataclass
 from typing import Optional
-from typing import Union
 
 
 @dataclass
+# pylint: disable=too-many-instance-attributes
 class CFGetModData:
     """
     Metadata for CurseForge Mod
     """
     id: int
+    # pylint: disable=invalid-name
     gameId: int
     name: str
     slug: str
@@ -48,5 +51,5 @@ class CFDataResponse:
     or an explanation of a non-HTTP error that occurred.
     '''
     payload: CFGetModResponse
-    statusCode: Optional[int]
+    status_code: Optional[int]
     status: Optional[str]
