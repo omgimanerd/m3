@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cd -- "$(dirname -- ${BASH_SOURCE[0]})" &> /dev/null && \
-source venv/bin/activate && \
-export PYTHONPATH="$PYTHONPATH:$(pwd):" && \
-echo $PYTHONPATH
+cd -- "$(dirname "$BASH_SOURCE[0]")" && \
+source venv/bin/activate
+if [[ ! $PYTHONPATH =~ "$(pwd)" ]]; then
+  export PYTHONPATH="$PYTHONPATH:$(pwd):"
+fi
+echo "PYTHONPATH=$PYTHONPATH"
