@@ -33,8 +33,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
 
         try:
             get_mod_endpoint = 'mods'
-            request_path = Path(CF_API_VERSION).joinpath(
-                get_mod_endpoint, str(mod_id))
+            request_path = Path(CF_API_VERSION) / get_mod_endpoint / str(mod_id)
             request_url = urljoin(CF_BASE_URL, str(request_path))
 
             headers = {
