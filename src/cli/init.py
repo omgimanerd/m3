@@ -9,7 +9,7 @@ from src.util.enum import Platform
 
 # pylint: disable-next=too-few-public-methods
 class Init:
-    '''Create an m3 project and set up a config file.'''
+    """Create an m3 project and set up a config file."""
 
     def __init__(self):
         config = Config.get_config()
