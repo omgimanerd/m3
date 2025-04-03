@@ -6,18 +6,18 @@ from dataclasses import field
 from pathlib import Path
 from typing import Optional, Self
 
-import orjson
 from fire.core import FireError
 from pydantic.dataclasses import dataclass
 
 from src.util.dataclasses import PathField
 from src.util.enum import Platform
-from src.util.json import serializer
+from src.util.json import dataclass_json
 from src.util.paths import walk_up_search
 
 CONFIG_FILENAME = 'm3.json'
 
 
+@dataclass_json
 @dataclass
 class ProjectPaths:
     """Dataclass for representing paths to the directories for assets that m3
@@ -28,6 +28,7 @@ class ProjectPaths:
     shaderpacks: Path = PathField('shaderpacks')
 
 
+@dataclass_json
 @dataclass
 class Config:
     """Dataclass container for the user's m3.json project configuration."""
@@ -71,12 +72,8 @@ class Config:
         """Returns the path of the config file."""
         return self._path
 
-    def json(self) -> str:
-        """Returns the JSON-serialized form of this class instance."""
-        return orjson.dumps(self, default=serializer,
-                            option=orjson.OPT_INDENT_2).decode('utf-8')
-
     def write(self):
         """Writes the state of this config object to the config file."""
         with open(self._path, 'w', encoding='utf-8') as f:
+            # pylint: disable=no-member
             f.write(self.json())
