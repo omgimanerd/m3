@@ -9,9 +9,9 @@ from typing import Optional, Self
 from fire.core import FireError
 from pydantic.dataclasses import dataclass
 
-from src.util.dataclasses import PathField
+from src.lib.dataclasses import PathField
+from src.lib.json import dataclass_json
 from src.util.enum import Platform
-from src.util.json import dataclass_json
 from src.util.paths import walk_up_search
 
 CONFIG_FILENAME = 'm3.json'
