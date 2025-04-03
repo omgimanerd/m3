@@ -2,29 +2,30 @@
 
 import json
 import os
-from dataclasses import asdict, dataclass, field
+from dataclasses import field
 from pathlib import Path
 from typing import Optional, Self
 
-from dataclasses_json import dataclass_json
+import orjson
 from fire.core import FireError
+from pydantic.dataclasses import dataclass
 
 from src.util.dataclasses import PathField
 from src.util.enum import Platform
+from src.util.json import serializer
 from src.util.paths import walk_up_search
 
 CONFIG_FILENAME = 'm3.json'
 
 
-@dataclass_json
 @dataclass
 class ProjectPaths:
     """Dataclass for representing paths to the directories for assets that m3
     should manage."""
-    mods: Path = field(**PathField('mods'))
-    resourcepacks: Path = field(**PathField('resourcepacks'))
-    texturepacks: Path = field(**PathField('texturepacks'))
-    shaderpacks: Path = field(**PathField('shaderpacks'))
+    mods: Path = PathField('mods')
+    resourcepacks: Path = PathField('resourcepacks')
+    texturepacks: Path = PathField('texturepacks')
+    shaderpacks: Path = PathField('shaderpacks')
 
 
 @dataclass
@@ -35,7 +36,7 @@ class Config:
     # The version of the project
     version: str
     # CurseForge or Modrinth
-    platform: Platform
+    platform: Platform = field(default_factory=Platform)
 
     authors: list[str] = field(default_factory=lambda: [])
 
@@ -43,15 +44,10 @@ class Config:
     paths: ProjectPaths = field(default_factory=ProjectPaths)
 
     # Path to build the output to.
-    output: Path = field(**PathField('output'))
+    output: Path = PathField('output')
 
     # The path of the config file this object represents.
-    _path: Path = field(**PathField(os.getcwd() / CONFIG_FILENAME))
-
-    @staticmethod
-    def factory(config):
-        """Dict factory method for dataclasses.asdict()"""
-        return {k: v for (k, v) in config if v is not None}
+    _path: Path = PathField(Path(os.getcwd()) / CONFIG_FILENAME)
 
     @staticmethod
     def get_config() -> Optional[Self]:
@@ -75,7 +71,12 @@ class Config:
         """Returns the path of the config file."""
         return self._path
 
+    def json(self) -> str:
+        """Returns the JSON-serialized form of this class instance."""
+        return orjson.dumps(self, default=serializer,
+                            option=orjson.OPT_INDENT_2).decode('utf-8')
+
     def write(self):
         """Writes the state of this config object to the config file."""
         with open(self._path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(asdict(self, dict_factory=Config.factory), indent=2))
+            f.write(self.json())

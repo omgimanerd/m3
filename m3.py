@@ -15,7 +15,7 @@ class M3:
         self.auth = Auth()
 
         self.list = List()
-        self.init = Init()
+        self.init = Init
 
 
 if __name__ == '__main__':
