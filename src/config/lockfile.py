@@ -2,7 +2,7 @@
 
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Self, Union
 
@@ -36,7 +36,7 @@ class LockfileEntry:
     hash: str
     file_type: Platform
     file_data: Union[CurseForgeLockfileEntry, ModrinthLockfileEntry]
-    side: Side
+    side: Side = field(default=Side.BOTH)
 
 
 @dataclass
