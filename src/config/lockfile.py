@@ -4,24 +4,45 @@
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Self
+from typing import Optional, Self, Union
 
 from fire.core import FireError
+
+from src.util.enum import Platform, Side
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
 
 @dataclass
-class LockfileEntries:
+class CurseForgeLockfileEntry:
+    """Dataclass wrapper for handling CurseForge lockfile entries."""
+    mod_id: int
+    file_id: int
+    cdn_link: str
+
+
+@dataclass
+class ModrinthLockfileEntry:
+    """Dataclass wrapper for handling Modrinth lockfile entries."""
+    mod_id: int
+    slug: str
+    cdn_link: str
+
+
+@dataclass
+class LockfileEntry:
     """Dataclass wrapper for handling lockfile entries."""
     name: str
     hash: str
+    file_type: Platform
+    file_data: Union[CurseForgeLockfileEntry, ModrinthLockfileEntry]
+    side: Side
 
 
 @dataclass
 class Lockfile:
     """Dataclass wrapper for handling m3's lockfile"""
-    lockfileentries: list[LockfileEntries]
+    lockfile_entries: dict[str, LockfileEntry]
     _path: Path
 
     @staticmethod
