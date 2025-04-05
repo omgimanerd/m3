@@ -5,14 +5,44 @@ from typing import Optional
 
 @dataclass
 # pylint: disable=too-many-instance-attributes
-class CFGetModData:
-    """Metadata for CurseForge Mod
-
-    Describes the data returned by the CurseForge API, 
-    follows naming convention of the API response.
-    """
-    id: int
+class CFFile:
+    """Schema of the File object returned by the CurseForge API."""
     # pylint: disable=invalid-name
+    id: int
+    gameId: int
+    modId: int
+    isAvailable: bool
+    displayName: str
+    fileName: str
+    releaseType: int  # FileReleaseType is an enum
+    fileStatus: int  # FileStatus is an enum
+    hashes: dict
+    fileDate: str
+    fileLength: int
+    downloadCount: int
+    fileSizeOnDisk: int
+    downloadUrl: str
+    gameVersions: list[str]
+    sortableGameVersions: list[dict]
+    dependencies: list[dict]
+    exposeAsAlternative: bool
+    parentProjectFileId: int
+    alternateFileId: int
+    isServerPack: bool
+    serverPackFileId: int
+    isEarlyAccessContent: bool
+    earlyAccessEndDate: str
+    fileFingerprint: int
+    modules: list[dict]
+    # pylint: enable=invalid-name
+
+
+@dataclass
+# pylint: disable=too-many-instance-attributes
+class CFMod:
+    """Schema of the Mod object returned by the CurseForge API."""
+    # pylint: disable=invalid-name
+    id: int
     gameId: int
     name: str
     slug: str
@@ -41,7 +71,7 @@ class CFGetModResponse:
     See documentation for endpoint here:
     https://docs.curseforge.com/rest-api/?python#get-mod
     """
-    data: list[CFGetModData]
+    data: list[CFMod]
 
 
 @dataclass
@@ -50,8 +80,8 @@ class CFDataResponse:
 
     The payload contains the data from the API call.
     The statusCode optionally contains the HTTP status code.
-    The status optionally contains either an explanation of the status code 
-    corresponding to response.reason or an explanation of a non-HTTP error that 
+    The status optionally contains either an explanation of the status code
+    corresponding to response.reason or an explanation of a non-HTTP error that
     occurred.
     """
     payload: CFGetModResponse
