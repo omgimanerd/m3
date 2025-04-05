@@ -2,13 +2,13 @@
 
 from json.decoder import JSONDecodeError
 from pathlib import Path
+from typing import Callable
 from urllib.parse import urljoin
 
 import requests
 from fire.core import FireError
 
-from src.api.dataclasses.cf_response_objects import (CFDataResponse,
-                                                     CFGetModResponse)
+from src.api.dataclasses.cf_response_objects import CFGetModResponse, CFMod
 
 CF_BASE_URL = 'https://api.curseforge.com'
 CF_API_VERSION = 'v1'
@@ -20,45 +20,64 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
     def __init__(self, api_key):
         self.api_key = api_key
 
-    def get_mod(self, mod_id: int) -> CFDataResponse:
+    def _get_headers(self) -> dict:
+        return {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'x-api-key': self.api_key
+        }
+
+    def _request(self, path: Path, body: dict = None) -> dict:
+        try:
+            url = urljoin(CF_BASE_URL, str(Path(CF_API_VERSION) / path))
+            response = requests.get(
+                url, headers=self._get_headers(), body=body, timeout=10)
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            raise FireError(
+                'A problem occurred while querying the CurseForge API') from e
+        except requests.exceptions.RequestException as e:
+            raise FireError(
+                'A problem occurred while querying the CurseForge API') from e
+        except JSONDecodeError as e:
+            raise FireError(
+                'Failed to decode JSON payload from CurseForge API') from e
+
+    def _unpack_request(self, path: str, unpacker: Callable[[object], object],
+                        body: dict = None) -> object:
+        try:
+            json = self._request(Path(path), body=body)
+            return unpacker(json)
+        except TypeError as e:
+            raise FireError(
+                f'Failed to process API response to {path}') from e
+
+    def get_mod(self, mod_id: int) -> CFMod:
         """Return CFGetModData object containing mod metadata.
 
         Parameters:
-          mod_id (int): The Mod ID for the mod metadata to be fetched
+          mod_id: The Mod ID for the mod metadata to be fetched
 
         Returns:
             An object containing CFGetModResponse object or None, statusCode of
             API request, and status containing status or error message.
         """
+        return self._unpack_request(f'mods/{mod_id}',
+                                    unpacker=lambda json: CFGetModResponse(**json))
 
-        try:
-            get_mod_endpoint = 'mods'
-            request_path = Path(CF_API_VERSION) / get_mod_endpoint / str(mod_id)
-            request_url = urljoin(CF_BASE_URL, str(request_path))
+    def get_mods(self, mod_ids: list[int]) -> list[CFMod]:
+        """Return list of CFGetModData object containing mod metadata.
 
-            headers = {
-                'Accept': 'application/json',
-                'x-api-key': self.api_key
-            }
+        Parameters:
+            mod_id: List of mod IDs to query
 
-            response = requests.get(request_url, headers=headers, timeout=10)
-            mod_data = CFGetModResponse(**response.json())
-        except requests.exceptions.HTTPError as err:
-            raise FireError(
-                'A problem occurred while querying the CurseForge API for ' +
-                f'mod {mod_id}') from err
-        except requests.exceptions.RequestException as err:
-            raise FireError(
-                'A problem occurred while querying the CurseForge API for ' +
-                f'mod {mod_id}') from err
-        except JSONDecodeError as err:
-            raise FireError(
-                f'Failed to decode JSON payload for mod {mod_id}') from err
-        except TypeError as err:
-            raise FireError(
-                f'Failed to process API response for mod {mod_id}') from err
-
-        return CFDataResponse(
-            payload=mod_data, status_code=response.status_code,
-            status=response.reason
-        )
+        Returns:
+            List of CFGetModResponse objects.
+        """
+        return self._unpack_request(
+            'mods',
+            body={
+                "modIds": mod_ids,
+                "filterPcOnly": True
+            },
+            unpacker=lambda json: [CFGetModResponse(**o) for o in json])
