@@ -1,5 +1,9 @@
 """list subcommand module"""
 
+import click
 
-class List:
-    pass
+
+@click.command()
+def list_mods():
+    """List mods currently in lockfile."""
+    # TODO: Alias this command to `list` for user
