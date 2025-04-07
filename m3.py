@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """CLI entry point."""
 
-import fire
+import click
 
-from src.cli.auth import Auth
-from src.cli.init import Init
-from src.cli.list import List
+from src.cli.add import add
+from src.cli.auth import auth
+from src.cli.init import init
+from src.cli.list import list_mods
 from src.config.config import Config
 
 
@@ -14,16 +15,16 @@ def test():
     print(c)
 
 
-class M3:
-    """Entry point to m3 CLI"""
+@click.group()
+def m3():
+    """Click command group for all m3 commands."""
 
-    def __init__(self):
-        self.auth = Auth()
 
-        self.list = List()
-        self.init = Init()
+m3.add_command(init)
+m3.add_command(add)
+m3.add_command(auth)
+m3.add_command(list_mods)
 
 
 if __name__ == '__main__':
-    fire.core.Display = lambda lines, out: print(*lines, file=out)
-    fire.Fire(M3)
+    m3()
