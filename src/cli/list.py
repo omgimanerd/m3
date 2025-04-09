@@ -3,7 +3,9 @@
 import click
 
 
-@click.command()
-def list_mods():
-    """List mods currently in lockfile."""
-    # TODO: Alias this command to `list` for user
+# pylint: disable-next=too-few-public-methods, missing-class-docstring
+class List:
+    @click.command()
+    @staticmethod
+    def list():
+        """List mods currently in lockfile."""

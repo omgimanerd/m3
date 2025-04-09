@@ -3,10 +3,10 @@
 
 import click
 
-from src.cli.add import add
-from src.cli.auth import auth
-from src.cli.init import init
-from src.cli.list import list_mods
+from src.cli.add import Add
+from src.cli.auth import Auth
+from src.cli.init import Init
+from src.cli.list import List
 from src.config.config import Config
 
 
@@ -20,10 +20,10 @@ def m3():
     """Click command group for all m3 commands."""
 
 
-m3.add_command(init)
-m3.add_command(add)
-m3.add_command(auth)
-m3.add_command(list_mods)
+m3.add_command(Init.init)
+m3.add_command(Add.add)
+m3.add_command(Auth.auth)
+m3.add_command(List.list)
 
 
 if __name__ == '__main__':
