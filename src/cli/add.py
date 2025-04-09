@@ -3,8 +3,10 @@
 import click
 
 
-@click.command()
-def add():
-    """Install a specified mod to the development directory and add it to the 
-    lockfile."""
-    click.echo('Installed mod and added to lockfile')
+# pylint: disable-next=missing-class-docstring
+class Add:
+    @click.command()
+    @staticmethod
+    def add():
+        """Install a specified mod and add it to the lockfile."""
+        click.echo('Installed mod and added to lockfile')
