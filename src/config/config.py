@@ -9,10 +9,10 @@ from typing import Optional, Self
 from fire.core import FireError
 from pydantic.dataclasses import dataclass
 
-from src.lib.dataclasses import PathField
+from src.lib.dataclasses import PathField, get_field_names
 from src.lib.json import dataclass_json
 from src.util.enum import Platform
-from src.util.paths import walk_up_search
+from src.util.paths import resolve_relative_path, walk_up_search
 
 CONFIG_FILENAME = 'm3.json'
 
@@ -89,3 +89,14 @@ class Config:
         with open(self._path, 'w', encoding='utf-8') as f:
             # pylint: disable-next=no-member
             f.write(self.json())
+
+    def resolve_asset_paths(self) -> dict[str, Path]:
+        """Resolves and returns relative paths for assets defined in config file."""
+        asset_paths = get_field_names(ProjectPaths)
+        resolved_asset_paths = {}
+        for asset_path in asset_paths:
+            resolved_path = resolve_relative_path(
+                self._path, getattr(self.paths, asset_path))
+            resolved_asset_paths[asset_path] = resolved_path
+
+        return resolved_asset_paths
