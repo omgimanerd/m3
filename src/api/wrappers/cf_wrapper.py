@@ -55,7 +55,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
     def get_mod(self, mod_id: int) -> CFMod:
         """Return CFGetModData object containing mod metadata.
 
-        Parameters:
+        Args:
           mod_id: The Mod ID for the mod metadata to be fetched
 
         Returns:
@@ -68,8 +68,8 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
     def get_mods(self, mod_ids: list[int]) -> list[CFMod]:
         """Return list of CFGetModData object containing mod metadata.
 
-        Parameters:
-            mod_id: List of mod IDs to query
+        Args:
+            mod_ids: List of mod IDs to query
 
         Returns:
             List of CFGetModResponse objects.
@@ -81,3 +81,16 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
                 "filterPcOnly": True
             },
             unpacker=lambda json: [CFGetModResponse(**o) for o in json])
+
+    def get_mod_cdn(self, mod_id: int, file_id: int) -> str:
+        """Return CDN URL for a mod file given a mod ID and file ID.
+
+        Args:
+            mod_id: The mod ID to query
+            file_id: The file ID of the file to query CDN URL for
+
+        Returns:
+            The CDN URL for the file as a string.
+        """
+        return self._unpack_request(f'mods/{mod_id}/files/{file_id}/download-url',
+                                    unpacker=lambda json: json['data'])
