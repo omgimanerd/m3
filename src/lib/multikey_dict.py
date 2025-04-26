@@ -23,61 +23,62 @@ class MultiKeyDict:
     def __init__(self, num_of_keys: int):
         """Initializes multikey dict to expect specified number of keys."""
         self.num_of_keys = num_of_keys
-        self.keys = {}
+        self.keys_to_multikeys = {}
         self.data = {}
 
-    def _validate_multikey(self, keys: tuple) -> bool:
+    def _validate_multikey(self, multikey: tuple) -> bool:
         """Validates that a given multikey contains the right number of keys, 
         each key is a valid key for the dict, and the multikey is linked to data.
 
         Returns true if the multikey is valid, raises error otherwise.
         """
-        if len(keys) != self.num_of_keys:
+        if len(multikey) != self.num_of_keys:
             raise ValueError(
-                f'Expected {self.num_of_keys} keys, got {len(keys)}')
-        for key_ in keys:
+                f'Expected {self.num_of_keys} keys, got {len(multikey)}')
+        for key_ in multikey:
             if not self.is_existing_key(key_):
                 raise ValueError(f'Given key {key_} was not found')
-        if self.data.get(keys) is None:
-            raise ValueError(f'Given multikey {keys} not associated with data')
+        if multikey not in self.data:
+            raise ValueError(
+                f'Given multikey {multikey} not associated with data')
         return True
 
     def is_existing_key(self, key: Hashable) -> bool:
-        """Returns True if a given key is a valid individual key for the dict, 
-        else returns False."""
-        return key in self.keys
+        """Returns True if a given key is an existing individual key for the 
+        dict, else returns False."""
+        return key in self.keys_to_multikeys
 
-    def add(self, keys: tuple, data: any):
+    def add(self, multikey: tuple, data: any):
         """Given a multikey and data, adds the entry to the dict. The multikey 
         must contain the number of expected keys.
 
         Args:
-            keys: the multikey to use to index the data
+            multikey: the multikey to use to index the data
             data: the data to add to dict
         """
-        if len(keys) != self.num_of_keys:
+        if len(multikey) != self.num_of_keys:
             raise ValueError(
-                f'Expected {self.num_of_keys} keys, got {len(keys)}')
-        for key_ in keys:
+                f'Expected {self.num_of_keys} keys, got {len(multikey)}')
+        for key_ in multikey:
             if self.is_existing_key(key_):
                 raise ValueError(f'Given key {key_} already exists')
-        for key_ in keys:
-            self.keys[key_] = keys
-        self.data[keys] = data
+        for key_ in multikey:
+            self.keys_to_multikeys[key_] = multikey
+        self.data[multikey] = data
 
-    def remove(self, keys: tuple) -> tuple:
+    def remove(self, multikey: tuple) -> tuple:
         """Removes a given multikey from the multikey dict if it is valid.
 
         Args:
-            keys: the multikey to remove from dict
+            multikey: the multikey to remove from dict
 
         Returns:
             The removed multikey as a tuple, else raise an error.
         """
-        self._validate_multikey(keys)
-        for key_ in keys:
-            self.keys.pop(key_)
-        return self.data.pop(keys)
+        self._validate_multikey(multikey)
+        for key_ in multikey:
+            self.keys_to_multikeys.pop(key_)
+        return self.data.pop(multikey)
 
     def get(self, key: Union[tuple, Hashable]) -> any:
         """Given a key or multikey, gets the associated data.
@@ -93,7 +94,7 @@ class MultiKeyDict:
             return self.data[key]
         if isinstance(key, Hashable):
             if self.is_existing_key(key):
-                return self.data[self.keys[key]]
+                return self.data[self.keys_to_multikeys[key]]
         return None
 
     def len(self) -> int:
@@ -106,8 +107,8 @@ class MultiKeyDict:
 
     def get_multikeys(self):
         """Returns all multikeys in the dict."""
-        return self.keys.values()
+        return self.keys_to_multikeys.values()
 
     def get_keys(self):
         """Returns all individual keys."""
-        return self.keys.keys()
+        return self.keys_to_multikeys.keys()
