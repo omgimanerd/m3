@@ -26,11 +26,6 @@ class MultiKeyDict:
         self.keys = {}
         self.data = {}
 
-    def _is_existing_key(self, key: Hashable) -> bool:
-        """Returns True if a given key is a valid individual key for the dict, 
-        else returns False."""
-        return key in self.keys
-
     def _validate_multikey(self, keys: tuple) -> bool:
         """Validates that a given multikey contains the right number of keys, 
         each key is a valid key for the dict, and the multikey is linked to data.
@@ -41,11 +36,16 @@ class MultiKeyDict:
             raise ValueError(
                 f'Expected {self.num_of_keys} keys, got {len(keys)}')
         for key_ in keys:
-            if not self._is_existing_key(key_):
+            if not self.is_existing_key(key_):
                 raise ValueError(f'Given key {key_} was not found')
         if self.data.get(keys) is None:
             raise ValueError(f'Given multikey {keys} not associated with data')
         return True
+
+    def is_existing_key(self, key: Hashable) -> bool:
+        """Returns True if a given key is a valid individual key for the dict, 
+        else returns False."""
+        return key in self.keys
 
     def add(self, keys: tuple, data: any):
         """Given a multikey and data, adds the entry to the dict. The multikey 
@@ -59,7 +59,7 @@ class MultiKeyDict:
             raise ValueError(
                 f'Expected {self.num_of_keys} keys, got {len(keys)}')
         for key_ in keys:
-            if self._is_existing_key(key_):
+            if self.is_existing_key(key_):
                 raise ValueError(f'Given key {key_} already exists')
         for key_ in keys:
             self.keys[key_] = keys
@@ -92,7 +92,7 @@ class MultiKeyDict:
             self._validate_multikey(key)
             return self.data[key]
         if isinstance(key, Hashable):
-            if self._is_existing_key(key):
+            if self.is_existing_key(key):
                 return self.data[self.keys[key]]
         return None
 
