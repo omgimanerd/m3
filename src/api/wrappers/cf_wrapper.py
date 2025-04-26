@@ -81,16 +81,3 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
                 "filterPcOnly": True
             },
             unpacker=lambda json: [CFGetModResponse(**o) for o in json])
-
-    def get_mod_cdn(self, mod_id: int, file_id: int) -> str:
-        """Return CDN URL for a mod file given a mod ID and file ID.
-
-        Args:
-            mod_id: The mod ID to query
-            file_id: The file ID of the file to query CDN URL for
-
-        Returns:
-            The CDN URL for the file as a string.
-        """
-        return self._unpack_request(f'mods/{mod_id}/files/{file_id}/download-url',
-                                    unpacker=lambda json: json['data'])
