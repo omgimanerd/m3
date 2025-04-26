@@ -95,8 +95,11 @@ class Config:
         asset_paths = get_field_names(ProjectPaths)
         resolved_asset_paths = {}
         for asset_path in asset_paths:
-            resolved_path = resolve_relative_path(
-                self._path, getattr(self.paths, asset_path))
-            resolved_asset_paths[asset_path] = resolved_path
+            try:
+                resolved_path = resolve_relative_path(
+                    self._path, getattr(self.paths, asset_path))
+                resolved_asset_paths[asset_path] = resolved_path
+            except Exception as error:
+                raise error
 
         return resolved_asset_paths

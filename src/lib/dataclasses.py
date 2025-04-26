@@ -27,8 +27,7 @@ def get_field_names(dataclass) -> list[str]:
     strings.
 
     Args:
-        dataclass: The dataclass to get the field names for. Note that it should 
-            be the dataclass itself and not an instance of it.
+        dataclass: The dataclass class object to get the field names for.
 
     Returns:
         list of field names as strings
