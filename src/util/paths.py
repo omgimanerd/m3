@@ -40,20 +40,8 @@ def resolve_relative_path(start: Path, path: Path) -> Optional[Path]:
     if resolved.exists() is None:
         try:
             resolved.mkdir(parents=True, exist_ok=True)
-        except PermissionError as error:
-            raise ClickException(
-                'Did not have permission to create and resolve asset path' +
-                f'{resolved}: {error}') from error
-        except IsADirectoryError as error:
-            raise ClickException('Cannot create and resolve asset path' +
-                                 f'{resolved} because it is a directory: ' +
-                                 f'{error}') from error
-        except OSError as error:
-            raise ClickException('A system error occurred while trying to ' +
-                                 f'create and resolve asset path {resolved}:' +
-                                 f'{error}') from error
         except Exception as error:
-            raise ClickException('An unexpected error occurred while trying ' +
+            raise ClickException('An error occurred while trying ' +
                                  'to create and resolve asset path' +
                                  f'{resolved}: {error}') from error
     return resolved
