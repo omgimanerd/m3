@@ -35,12 +35,16 @@ class MultiKeyDict:
             raise ValueError(
                 f'Expected {self.num_of_keys} keys, got {len(multikey)}')
 
-    def __getattribute__(self, multikey: tuple) -> any:
-        pass
+    def __getattribute__(self, key: Hashable) -> any:
+        """Get data associated with key if it exists, else try treating the arg
+        as an attribute."""
+        if key in self.keys_to_multikeys:
+            return self.get(key)
+        return super().__getattribute__(key)
 
     def is_existing_key(self, key: Hashable) -> bool:
         """Returns True if the given key is an existing key in the 
-        key_to_multikey map."""
+        keys_to_multikey map."""
         return key in self.keys_to_multikeys
 
     def is_existing_multikey(self, key: tuple) -> bool:
@@ -53,8 +57,8 @@ class MultiKeyDict:
         must contain the number of expected keys.
 
         Args:
-            multikey: the multikey to use to index the data data: the data to
-            add to dict
+            multikey: the multikey to use to index the data
+            data: the data to add to dict
         """
         self._validate_multikey(multikey)
         for key_ in multikey:
@@ -73,6 +77,8 @@ class MultiKeyDict:
             The removed data entry, else raise an error.
         """
         self._validate_multikey(multikey)
+        if not self.is_existing_multikey(multikey):
+            raise KeyError(f'Given multikey {multikey} does not exist')
         for key_ in multikey:
             self.keys_to_multikeys.pop(key_)
         return self.data.pop(multikey)
@@ -87,8 +93,7 @@ class MultiKeyDict:
         Returns:
             The data associated with the given key or None.
         """
-        return self.data.get(self.keys
-                             .get(key, None), None)
+        return self.data.get(self.keys.get(key, None), None)
 
     def len(self) -> int:
         """Returns the number of data entries."""
