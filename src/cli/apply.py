@@ -6,19 +6,22 @@ from src.config.config import Config
 from src.config.lockfile import Lockfile
 from src.config.lockfile_entry_manager import LockfileEntryManager
 
+HELPTEXT = """
+Remove assets found in the project asset directories that are not in the
+lockfile.
+"""
 
 # pylint: disable-next=too-few-public-methods
+
+
 class Apply:
     """Class for the apply command."""
     @click.command()
-    @click.option('-r', '--remove', is_flag=True)
+    @click.option('-r', '--remove', is_flag=True, help=HELPTEXT)
     @staticmethod
     def apply(remove):
-        """Apply the current lockfile state to the development directory.
-
-        Installs assets found in the lockfile but not the development directory.
-        If the flag `-r` is specified, will remove assets found in the directory 
-        but not in the lockfile.
+        """Installs assets recorded in the lockfile into the project asset
+        directories.
         """
         config = Config.get_config()
         lockfile = Lockfile.create(config.get_path())
