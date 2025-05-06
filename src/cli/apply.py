@@ -11,9 +11,8 @@ Remove assets found in the project asset directories that are not in the
 lockfile.
 """
 
+
 # pylint: disable-next=too-few-public-methods
-
-
 class Apply:
     """Class for the apply command."""
     @click.command()

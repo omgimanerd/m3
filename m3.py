@@ -10,15 +10,13 @@ from src.cli.init import Init
 from src.cli.list import List
 from src.config.config import Config
 
-CONTEXT_SETTINGS = {'help_option_names': ['-h', '--help']}
-
 
 def test():
     c = Config.get_config()
     print(c)
 
 
-@click.group(context_settings=CONTEXT_SETTINGS)
+@click.group(context_settings={'help_option_names': ['-h', '--help']})
 def m3():
     """Click command group for all m3 commands."""
 
