@@ -1,1 +1,0 @@
-"""status subcommand module"""

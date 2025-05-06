@@ -6,6 +6,7 @@ import click
 from fire.core import FireError
 
 from src.api.apikey import get_api_key, set_api_key
+from src.util.click_helpers import CONTEXT_SETTINGS
 
 
 # pylint: disable-next=missing-class-docstring
@@ -17,20 +18,20 @@ class Auth:
     def auth():
         """Command subgroup for auth subcommands."""
 
-    @click.command()
+    @click.command(context_settings=CONTEXT_SETTINGS)
     @staticmethod
     def set():
-        """Set the CurseForge API key."""
+        """Sets the CurseForge API key."""
         apikey = getpass(prompt='API Key (will not be displayed): ')
         if not apikey:
             raise FireError('Cannot set empty API key.')
         set_api_key(apikey=apikey)
         print('CurseForge API key set successfully.')
 
-    @click.command()
+    @click.command(context_settings=CONTEXT_SETTINGS)
     @staticmethod
     def show():
-        """Show the stored CurseForge API key."""
+        """Shows the currently stored CurseForge API key."""
         apikey = get_api_key()
         if apikey is None:
             print('No API key set.')
