@@ -1,15 +1,8 @@
-"""Helper to set the context settings for CLI commands that accept -h or
---help"""
+"""Helpers for click to declare command aliases."""
 
 from typing import Dict
 
 import click
-
-# Context settings used by click command declarations to allow -h or --help as
-# help option triggers
-CONTEXT_SETTINGS = {
-    'help_option_names': ['-h', '--help']
-}
 
 
 def command_aliases(aliases: Dict[str, set[str]]):
