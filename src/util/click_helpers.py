@@ -29,6 +29,11 @@ def command_aliases(aliases: Dict[str, set[str]]):
     def get_command(self, ctx, cmd_name):
         """Overload of click.Group's get_command method to search through the
         given alias map when getting a command by its alias name."""
+        # Attempt to look up the base command first.
+        default_command = click.Group.get_command(self, ctx, cmd_name)
+        if default_command is not None:
+            return default_command
+        # Check to see if there is a corresponding alias registered.
         if cmd_name in alias_map:
             return click.Group.get_command(self, ctx, alias_map[cmd_name])
         ctx.fail(f'No such command `{cmd_name}`')
@@ -37,11 +42,12 @@ def command_aliases(aliases: Dict[str, set[str]]):
     def resolve_command(self, ctx, args):
         """Overload of click.Group's resolve_command method to always return the
         full command name."""
-        _, cmd, args = super().resolve_command(ctx, args)
+        _, cmd, args = super(classtype, self).resolve_command(ctx, args)
         return cmd.name, cmd, args
 
     # Returns a dynamically created class type that is a subclass of click.Group
-    return type('CommandAlias', (click.Group,), {
+    classtype = type('CommandAlias', (click.Group,), {
         'get_command': get_command,
         'resolve_command': resolve_command
     })
+    return classtype

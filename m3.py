@@ -13,14 +13,14 @@ from src.cli.init import Init
 from src.cli.list import List
 from src.cli.prune import Prune
 from src.cli.remove import Remove
-from src.util.click_helpers import command_aliases
+from src.util.click_helpers import CONTEXT_SETTINGS, command_aliases
 
 
-@click.group(cls=command_aliases({
+@click.group(context_settings=CONTEXT_SETTINGS, cls=command_aliases({
     'add': {'a', 'install'},
     'remove': {'rm', 'uninstall'},
     'diff': {'d'},
-    'ls': {'l'},
+    'list': {'l'},
 }))
 def m3():
     """Click command group for all m3 commands."""

@@ -2,12 +2,10 @@
 
 import click
 
-from src.util.click_helpers import CONTEXT_SETTINGS
-
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class Prune:
-    @click.command(context_settings=CONTEXT_SETTINGS)
+    @click.command()
     @staticmethod
     def prune():
         """Removes assets from the project directory that are not recorded in

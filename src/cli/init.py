@@ -4,13 +4,12 @@ import click
 from fire.core import FireError
 
 from src.config.config import Config
-from src.util.click_helpers import CONTEXT_SETTINGS
 from src.util.enum import Platform
 
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class Init:
-    @click.command(context_settings=CONTEXT_SETTINGS)
+    @click.command()
     @staticmethod
     def init():
         """Initializes an m3 managed project in the current directory."""
