@@ -2,15 +2,13 @@
 
 import click
 
-from src.util.click_helpers import CONTEXT_SETTINGS
-
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class Add:
-    @click.command(context_settings=CONTEXT_SETTINGS)
+    @click.command()
     @click.argument('identifier')
     @staticmethod
-    def add():
+    def add(identifier):
         """Installs the specified asset into your file system and adds it to the
         lockfile.
 
