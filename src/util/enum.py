@@ -19,3 +19,11 @@ class Side(Enum):
     CLIENT = 'client'
     SERVER = 'server'
     BOTH = 'both'
+
+
+class Asset(Enum):
+    """Asset types that m3 manages."""
+    MOD = 'mod'
+    RESOURCE = 'resource'
+    TEXTURE = 'texture'
+    SHADER = 'shader'
