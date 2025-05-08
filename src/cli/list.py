@@ -2,10 +2,12 @@
 
 import click
 
+from src.util.click_helpers import command_with_aliases
+
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class List:
-    @click.command()
+    @command_with_aliases('l')
     # TODO(a yain): Set this to only accept valid asset types
     @click.option('-t', '--type', help="""Filters the output by asset type.""")
     @staticmethod

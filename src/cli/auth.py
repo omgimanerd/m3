@@ -15,7 +15,7 @@ class Auth:
     @click.group()
     @staticmethod
     def auth():
-        """Command subgroup for auth subcommands."""
+        """Set or get the CurseForge API key."""
 
     @click.command()
     @staticmethod

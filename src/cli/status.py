@@ -1,12 +1,11 @@
 """diff subcommand"""
 
-import click
+from src.util.click_helpers import command_with_aliases
 
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class Status:
-    @click.command()
+    @command_with_aliases('s', 'st')
     @staticmethod
     def status():
-        """Displays the state of the assets in the project directory any diffs
-        with the lockfile."""
+        """Diffs the lockfile against the project asset directories."""
