@@ -7,7 +7,7 @@ from src.util.click_helpers import command_with_aliases
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class List:
-    @command_with_aliases('l')
+    @command_with_aliases('l', 'ls')
     # TODO(a yain): Set this to only accept valid asset types
     @click.option('-t', '--type', help="""Filters the output by asset type.""")
     @staticmethod
