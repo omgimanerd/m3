@@ -13,19 +13,15 @@ from src.cli.list import List
 from src.cli.prune import Prune
 from src.cli.remove import Remove
 from src.cli.status import Status
-from src.util.click_helpers import command_aliases
+from src.util.click_helpers import AliasGroup
 
 
 @click.group(context_settings={
     'help_option_names': ['-h', '--help']
-}, cls=command_aliases({
-    'add': {'a', 'install'},
-    'remove': {'rm', 'uninstall'},
-    'diff': {'d'},
-    'list': {'l'},
-}))
+}, cls=AliasGroup)
+# pylint: disable-next=missing-function-docstring
 def m3():
-    """Click command group for all m3 commands."""
+    pass
 
 
 m3.add_command(Init.init)

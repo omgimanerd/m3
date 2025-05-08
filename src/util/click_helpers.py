@@ -1,46 +1,64 @@
 """Helpers for click to declare command aliases."""
 
-from typing import Dict
-
 import click
 
 
-def command_aliases(aliases: Dict[str, set[str]]):
-    """Returns a subclass of click.Group that handles command aliasing.
+class AliasCommand(click.Command):
+    """Custom subclass of click.Command that supports an extra aliases kwargs
+    to be stored as an acceptable alias for executing the command."""
 
-    https://click.palletsprojects.com/en/stable/advanced/#command-aliases
+    # pylint: disable-next=dangerous-default-value
+    def __init__(self, *args, aliases=[], **kwargs):
+        self.aliases = set(aliases)
+        super().__init__(*args, **kwargs)
 
-    Args:
-        aliases: a mapping of commands to their accepted aliases
+    def format_help(self, ctx, formatter):
+        """Overrides the format_help function to write the accepted aliases into
+        the help text."""
+        self.format_usage(ctx, formatter)
+        self.format_help_text(ctx, formatter)
+        if len(self.aliases) > 0:
+            with formatter.section('Aliases'):
+                formatter.write_text(', '.join(self.aliases))
+        self.format_options(ctx, formatter)
+        self.format_epilog(ctx, formatter)
 
-    Returns:
-        the subclass type used by click to resolve commands.
-    """
-    alias_map = {alias: command for command, _aliases in aliases.items()
-                 for alias in _aliases}
 
-    def get_command(self, ctx, cmd_name):
+def command_with_aliases(*args, **kwargs):
+    """Returns a decorator that wraps the click.command decorator, forwarding
+    *args as aliases to the AliasCommand subclass and **kwargs to the
+    underlying click.command decorator itself."""
+    def decorator(func):
+        return click.command(cls=AliasCommand, aliases=args, **kwargs)(func)
+    return decorator
+
+
+class AliasGroup(click.Group):
+    """Custom subclass of click.Group that allows for command aliasing using
+    the decorator above."""
+
+    def get_command(self, ctx: click.Context, cmd_name: str):
         """Overload of click.Group's get_command method to search through the
-        given alias map when getting a command by its alias name."""
+        a command's registered aliases if they exist.
+
+        Args:
+           ctx: The click context
+           cmd_name: The command name provided on the actual command line
+        """
         # Attempt to look up the base command first.
         default_command = click.Group.get_command(self, ctx, cmd_name)
         if default_command is not None:
             return default_command
-        # Check to see if there is a corresponding alias registered.
-        if cmd_name in alias_map:
-            return click.Group.get_command(self, ctx, alias_map[cmd_name])
-        ctx.fail(f'No such command `{cmd_name}`')
+        for command_name in self.list_commands(ctx):
+            # Get the actual command object corresponding to the command name
+            command = self.get_command(ctx, command_name)
+            if isinstance(command, AliasCommand):
+                if cmd_name in command.aliases:
+                    return command
         return None
 
-    def resolve_command(self, ctx, args):
+    def resolve_command(self, ctx: click.Context, args: list[any]):
         """Overload of click.Group's resolve_command method to always return the
         full command name."""
-        _, cmd, args = super(classtype, self).resolve_command(ctx, args)
+        _, cmd, args = super().resolve_command(ctx, args)
         return cmd.name, cmd, args
-
-    # Returns a dynamically created class type that is a subclass of click.Group
-    classtype = type('CommandAlias', (click.Group,), {
-        'get_command': get_command,
-        'resolve_command': resolve_command
-    })
-    return classtype
