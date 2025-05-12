@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 from typing import Optional
 
-
 from click import ClickException
 
 HOME_DIR = Path.home()
