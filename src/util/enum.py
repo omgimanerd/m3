@@ -21,7 +21,7 @@ class Side(Enum):
     BOTH = 'both'
 
 
-class Asset(Enum):
+class AssetType(Enum):
     """Asset types that m3 manages."""
     MOD = 'mod'
     RESOURCE = 'resource'
