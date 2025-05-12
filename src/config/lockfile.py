@@ -2,14 +2,13 @@
 
 
 import json
-from click import ClickException
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Self, Union
 
+from click import ClickException
 
 from src.util.enum import Platform, Side
-
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
