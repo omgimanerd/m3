@@ -6,7 +6,8 @@ from typing import Callable
 from urllib.parse import urljoin
 
 import requests
-from fire.core import FireError
+
+from click import ClickException
 
 from src.api.dataclasses.cf_response_objects import CFGetModResponse, CFMod
 
@@ -34,13 +35,13 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
                 url, headers=self._get_headers(), body=body, timeout=10)
             return response.json()
         except requests.exceptions.HTTPError as e:
-            raise FireError(
+            raise ClickException(
                 'A problem occurred while querying the CurseForge API') from e
         except requests.exceptions.RequestException as e:
-            raise FireError(
+            raise ClickException(
                 'A problem occurred while querying the CurseForge API') from e
         except JSONDecodeError as e:
-            raise FireError(
+            raise ClickException(
                 'Failed to decode JSON payload from CurseForge API') from e
 
     def _unpack_request(self, path: str, unpacker: Callable[[object], object],
@@ -49,7 +50,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             json = self._request(Path(path), body=body)
             return unpacker(json)
         except TypeError as e:
-            raise FireError(
+            raise Exception(
                 f'Failed to process API response to {path}') from e
 
     def get_mod(self, mod_id: int) -> CFMod:

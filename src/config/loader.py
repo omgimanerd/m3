@@ -7,8 +7,7 @@ from src.config.lockfile import Lockfile
 
 
 def load_config_and_lockfile() -> tuple[Optional[Config], Optional[Lockfile]]:
-    """Attempts to load the config and lockfile, surfacing any errors to
-    Fire.
+    """Attempts to load the config and lockfile, surfacing any errors.
 
     Returns:
       a two-tuple containing the config and lockfile, or Nones if not found

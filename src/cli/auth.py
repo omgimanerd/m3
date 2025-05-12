@@ -3,7 +3,6 @@
 from getpass import getpass
 
 import click
-from fire.core import FireError
 
 from src.api.apikey import get_api_key, set_api_key
 
@@ -23,7 +22,7 @@ class Auth:
         """Sets the CurseForge API key."""
         apikey = getpass(prompt='API Key (will not be displayed): ')
         if not apikey:
-            raise FireError('Cannot set empty API key.')
+            raise click.ClickException('Cannot set empty API key.')
         set_api_key(apikey=apikey)
         print('CurseForge API key set successfully.')
 

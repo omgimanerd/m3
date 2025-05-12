@@ -6,8 +6,9 @@ from dataclasses import field
 from pathlib import Path
 from typing import Optional, Self
 
-from fire.core import FireError
 from pydantic.dataclasses import dataclass
+
+from click import ClickException
 
 from src.lib.dataclasses import PathField, get_field_names
 from src.lib.json import dataclass_json
@@ -74,10 +75,10 @@ class Config:
             try:
                 return Config(**json.load(f), _path=path)
             except json.decoder.JSONDecodeError as exc:
-                raise FireError(
+                raise ClickException(
                     f'Found malformed config file at {path}') from exc
             except TypeError as exc:
-                raise FireError(
+                raise ClickException(
                     f'Invalid {CONFIG_FILENAME} found at {path}') from exc
 
     def get_path(self) -> Path:
