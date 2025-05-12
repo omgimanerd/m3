@@ -4,7 +4,8 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from fire.core import FireError
+
+from click import ClickException
 
 HOME_DIR = Path.home()
 
@@ -18,7 +19,7 @@ def _get_m3_dir() -> Path:
         try:
             os.makedirs(path, mode=0o700)
         except Exception as e:
-            raise FireError(f'Unable to create {path}.') from e
+            raise ClickException(f'Unable to create {path}.') from e
     return path
 
 
@@ -31,7 +32,7 @@ def get_api_key() -> Optional[str]:
         with open(authfile, 'r', encoding='utf-8') as f:
             return f.read()
     except Exception as e:
-        raise FireError(f'Unable to access {authfile}') from e
+        raise ClickException(f'Unable to access {authfile}') from e
 
 
 def set_api_key(apikey: str):
@@ -42,4 +43,4 @@ def set_api_key(apikey: str):
             f.write(apikey)
         os.chmod(authfile, 0o600)
     except Exception as e:
-        raise FireError(f'Unable to write {authfile}') from e
+        raise ClickException(f'Unable to write {authfile}') from e
