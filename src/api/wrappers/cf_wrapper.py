@@ -6,7 +6,6 @@ from typing import Callable
 from urllib.parse import urljoin
 
 import requests
-
 from click import ClickException
 
 from src.api.dataclasses.cf_response_objects import CFGetModResponse, CFMod

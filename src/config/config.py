@@ -6,9 +6,8 @@ from dataclasses import field
 from pathlib import Path
 from typing import Optional, Self
 
-from pydantic.dataclasses import dataclass
-
 from click import ClickException
+from pydantic.dataclasses import dataclass
 
 from src.lib.dataclasses import PathField, get_field_names
 from src.lib.json import dataclass_json
