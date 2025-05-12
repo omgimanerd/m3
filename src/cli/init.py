@@ -1,7 +1,6 @@
 """init subcommand module"""
 
 import click
-from fire.core import FireError
 
 from src.config.config import Config
 from src.util.enum import Platform
@@ -15,7 +14,7 @@ class Init:
         """Initializes an m3 managed project in the current directory."""
         config = Config.get_config()
         if config is not None:
-            raise FireError(
+            raise click.ClickException(
                 f'Found an already existing config file: ${config.get_path()}')
         name = click.prompt('Project Name')
         platform = click.prompt(

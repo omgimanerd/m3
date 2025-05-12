@@ -2,13 +2,14 @@
 
 
 import json
+from click import ClickException
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Self, Union
 
-from fire.core import FireError
 
 from src.util.enum import Platform, Side
+
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
@@ -55,7 +56,7 @@ class Lockfile:
           path: The path to attempt to search for a lockfile.
 
         Returns:
-          A Lockfile dataclass instance, or throws an FireError if an invalid
+          A Lockfile dataclass instance, or throws an ClickError if an invalid
           lockfile was found.
         """
         filepath = path / LOCKFILE_FILENAME
@@ -65,9 +66,10 @@ class Lockfile:
             with open(filepath, 'r', encoding='utf-8') as f:
                 return Lockfile(**json.load(f), _path=filepath)
         except json.decoder.JSONDecodeError as e:
-            raise FireError(f'Found malformed lockfile at {filepath}') from e
+            raise ClickException(
+                f'Found malformed lockfile at {filepath}') from e
         except TypeError as e:
-            raise FireError(
+            raise ClickException(
                 f'Invalid {LOCKFILE_FILENAME} found at {filepath}') from e
 
     def write(self):
