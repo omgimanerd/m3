@@ -2,7 +2,7 @@
 from collections.abc import Callable
 
 
-def reindex(dict_of_dataclasses, f: Callable):
+def reindex(dict_of_dataclasses: dict[any, any], f: Callable):
     """Reindexes a given dict of objects on a new key in the objects.
 
     To work as intended, note that the new key to reindex on must:
