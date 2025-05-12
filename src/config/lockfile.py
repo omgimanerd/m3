@@ -1,14 +1,10 @@
 """Dataclass wrapper for handling m3's lockfile"""
 
-
-import hashlib
 import json
-import os
-import tomllib
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Self, Union
+from typing import Optional, Self
 
 from click import ClickException
 
@@ -18,57 +14,9 @@ LOCKFILE_FILENAME = 'm3.lock.json'
 
 
 @dataclass
-class CurseForgeLockfileEntry:
-    """Dataclass wrapper for handling CurseForge lockfile entries."""
-    mod_id: int
-    file_id: int
-    cdn_link: str
-
-
-@dataclass
-class ModrinthLockfileEntry:
-    """Dataclass wrapper for handling Modrinth lockfile entries."""
-    mod_id: int
-    slug: str
-    version_id: str
-    cdn_link: str
-
-
-@dataclass
-class HashEntry:
-    """Dataclass wrapper for handling file hashes of different hash algorithms."""
-    sha1: str
-    sha512: str
-    md5: str
-
-
-@dataclass
-class LockfileEntry:
-    """Dataclass wrapper for handling lockfile entries."""
-    name: str
-    hash: HashEntry
-    file_name: str
-    file_type: Platform
-    file_data: Union[CurseForgeLockfileEntry, ModrinthLockfileEntry]
-    side: Side = field(default=Side.BOTH)
-
-
-@dataclass
-class LockfileEntries:
-    """Dataclass wrapper for handling different types of lockfile entries.
-
-    Indexed by a unique name as a string.
-    """
-    mods: dict[str, LockfileEntry] = field(default={})
-    resoucepacks: dict[str, LockfileEntry] = field(default={})
-    texturepacks: dict[str, LockfileEntry] = field(default={})
-    shaderpacks: dict[str, LockfileEntry] = field(default={})
-
-
-@dataclass
 class Lockfile:
     """Dataclass wrapper for handling m3's lockfile"""
-    lockfile_entries: LockfileEntries
+    entries: dict[str, LockfileEntry]
     _path: Path
 
     @staticmethod
@@ -102,74 +50,38 @@ class Lockfile:
         with open(self._path, 'w', encoding='utf-8') as f:
             f.write(json.dumps(self, indent=2))
 
-    def add_entry(self, entry: LockfileEntry, entry_type: Asset):
+    def add_entry(self, entry: LockfileEntry):
         """Adds a specified entry to the lockfile object."""
-        if self.get_entry(entry, entry_type) is None:
-            if type is Asset.MOD:
-                self.lockfile_entries.mods[entry.name] = entry
-            elif type is Asset.RESOURCE:
-                self.lockfile_entries.resoucepacks[entry.name] = entry
-            elif type is Asset.TEXTURE:
-                self.lockfile_entries.texturepacks[entry.name] = entry
-            else:
-                self.lockfile_entries.shaderpacks[entry.name] = entry
-        else:
-            raise ClickException(f'{entry_type} {entry.name} ' +
-                                 'already exists in lockfile')
+        self.entries[entry.name] = entry
 
-    def remove_entry(self, entry: LockfileEntry, entry_type: Asset):
+    def remove_entry(self, entry: LockfileEntry):
         """Removes a given entry from the lockfile object.
 
         Returns the removed entry, or None if entry was not found.
         """
-        if self.get_entry(entry, entry_type) is not None:
-            if type is Asset.MOD:
-                removed = self.lockfile_entries.mods.pop(entry.name)
-            elif type is Asset.RESOURCE:
-                removed = self.lockfile_entries.resoucepacks.pop(entry.name)
-            elif type is Asset.TEXTURE:
-                removed = self.lockfile_entries.texturepacks.pop(entry.name)
-            else:
-                removed = self.lockfile_entries.shaderpacks.pop(entry.name)
-
-            return removed
+        if self.entries.get(entry.name) is not None:
+            return self.entries.pop(entry.name)
         return None
 
-    def update_entry(self, entry: LockfileEntry, entry_type: Asset):
+    def update_entry(self, entry: LockfileEntry):
         """Updates an existing entry in the lockfile with a new LockfileEntry 
         object.
 
         If the object does not exist, adds it to the lockfile as a new entry.
         """
-        if self.get_entry(entry, entry_type) is not None:
-            if type is Asset.MOD:
-                self.lockfile_entries.mods[entry.name] = entry
-            elif type is Asset.RESOURCE:
-                self.lockfile_entries.resoucepacks[entry.name] = entry
-            elif type is Asset.TEXTURE:
-                self.lockfile_entries.texturepacks[entry.name] = entry
-            else:
-                self.lockfile_entries.shaderpacks[entry.name] = entry
-        else:
-            self.add_entry(entry, entry_type)
+        self.entries[entry.name] = entry
 
-    def get_entry(self, entry: LockfileEntry, entry_type: Asset):
+    def get_entry(self, entry: LockfileEntry):
         """Gets a specified entry from the lockfile object."""
-        if entry_type is Asset.MOD:
-            return self.lockfile_entries.mods.get(entry.name)
-        if entry_type is Asset.RESOURCE:
-            return self.lockfile_entries.resoucepacks.get(entry.name)
-        if entry_type is Asset.TEXTURE:
-            return self.lockfile_entries.texturepacks.get(entry.name)
-        return self.lockfile_entries.shaderpacks.get(entry.name)
+        return self.entries.get(entry.name)
 
     def reindex_lockfile_entries(
-            self, lockfile_entries: LockfileEntries, f_new_key: Callable
+            self, entries: list[LockfileEntry], f_new_key: Callable
     ):
         """Reindex lockfile entries across all types on a common new key.
 
         Args:
-            lockfile_entries: the object containing all lockfile entry types
+            entries: the object containing all lockfile entries
             new_key: the new key to reindex lockfile entries by
 
         Returns:
@@ -177,37 +89,23 @@ class Lockfile:
         """
 
         try:
-            reindexed_dicts = {
-                'mod_entries': reindex(
-                    lockfile_entries.mod_entries, f_new_key
-                ),
-                'resource_entries': reindex(
-                    lockfile_entries.resouce_entries, f_new_key
-                ),
-                'texture_entries': reindex(
-                    lockfile_entries.texture_entries, f_new_key
-                ),
-                'shader_entries': reindex(
-                    lockfile_entries.shader_entries, f_new_key
-                )
-            }
+            reindexed_dicts = reindex(
+                entries, f_new_key
+            )
         except Exception as error:
             raise ClickException(
                 'Failed to reindex lockfile entries:' + f'{error}') from error
         return reindexed_dicts
 
+    def filter_by_asset_type(self, asset_type: AssetType):
+        """Returns a dict containing all entries of a given asset type.
 
-class LockfileContextManager():
-    """Context manager for m3 lockfile."""
+        Args:
+            asset_type: The asset type to filter entries by
 
-    def __init__(self, filename: str, mode: str):
-        self.filename = filename
-        self.mode = mode
-        self.file = None
-
-    def __enter__(self):
-        self.file = open(self.filename, self.mode, encoding='utf-8')
-        return self.file
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.file.close()
+        Returns:
+            A dict keyed by the asset name, containing all entries of the given
+            asset type.
+        """
+        return {name: entry for name, entry in self.entries.items()
+                if entry.asset_type == asset_type}
