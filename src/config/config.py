@@ -42,7 +42,7 @@ class Config:
     # CurseForge or Modrinth
     platform: Platform = field(default=Platform.CURSEFORGE)
     # Authors of the project
-    authors: list[str] = field(default_factory=lambda: [])
+    authors: list[str] = field(default_factory=list)
 
     # Paths to assets that m3 can manage relative to the config file itself
     paths: ProjectPaths = field(default_factory=ProjectPaths)
@@ -51,11 +51,11 @@ class Config:
     output: Path = PathField('output')
 
     # List of glob matchers for files to include/exclude in the client modpack
-    client_includes: list[Path] = field(default_factory=lambda: [])
-    client_excludes: list[Path] = field(default_factory=lambda: [])
+    client_includes: list[Path] = field(default_factory=list)
+    client_excludes: list[Path] = field(default_factory=list)
     # List of glob matchers for files to include/exclude in the server modpack
-    server_includes: list[Path] = field(default_factory=lambda: [])
-    server_excludes: list[Path] = field(default_factory=lambda: [])
+    server_includes: list[Path] = field(default_factory=list)
+    server_excludes: list[Path] = field(default_factory=list)
 
     # The path of the config file this object represents.
     _path: Path = PathField(Path(os.getcwd()) / CONFIG_FILENAME)
