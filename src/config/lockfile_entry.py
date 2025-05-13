@@ -1,6 +1,6 @@
 """Class for defining m3's lockfile entries."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from src.lib.asset import Asset
 from src.util.enum import AssetType, Platform
@@ -14,10 +14,12 @@ class HashEntry:
     md5: str
 
 
+@dataclass
 class LockfileEntry:
     """Class for defining lockfile entries."""
     name: str
-    hash: HashEntry  # TODO: Consider redesigning this into something simpler
-    platform: Platform
-    asset_type: AssetType
-    asset: Asset
+    # TODO: Consider redesigning this into something simpler
+    hash: HashEntry = field(default_factory=HashEntry)
+    platform: Platform = field(default_factory=Platform)
+    asset_type: AssetType = field(default_factory=AssetType)
+    asset: Asset = field(default_factory=Asset)
