@@ -1,0 +1,28 @@
+{
+    "name": "test-config",
+    "version": "test",
+    "platform": "curseforge",
+    "authors": [
+        "test-author",
+        "test-author2"
+    ],
+    "paths": {
+        "mods": "mods",
+        "resourcepacks": "custom_subdirectory/resourcepacks",
+        "texturepacks": "texturepacks",
+        "shaderpacks": "shaderpacks"
+    },
+    "output": "output",
+    "client_includes": [
+        "path/to/include_client"
+    ],
+    "client_excludes": [
+        "path/to/exclude_client"
+    ],
+    "server_includes": [
+        "path/to/include_server"
+    ],
+    "server_excludes": [
+        "path/to/exclude_server"
+    ]
+}
