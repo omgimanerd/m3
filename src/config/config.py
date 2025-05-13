@@ -40,7 +40,7 @@ class Config:
     # The version of the project
     version: str
     # CurseForge or Modrinth
-    platform: Platform = field(default_factory=Platform)
+    platform: Platform = field(default=Platform.CURSEFORGE)
     # Authors of the project
     authors: list[str] = field(default_factory=lambda: [])
 
