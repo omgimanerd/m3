@@ -51,7 +51,11 @@ class Lockfile:
             f.write(json.dumps(self, indent=2))
 
     def add_entry(self, entry: LockfileEntry):
-        """Adds a specified entry to the lockfile object."""
+        """Adds a specified entry to the lockfile object.
+
+        If the object exists, updates the existing entry in the lockfile with a 
+        new LockfileEntry object.
+        """
         self.entries[entry.name] = entry
 
     def remove_entry(self, entry: LockfileEntry):
@@ -62,14 +66,6 @@ class Lockfile:
         if self.entries.get(entry.name) is not None:
             return self.entries.pop(entry.name)
         return None
-
-    def update_entry(self, entry: LockfileEntry):
-        """Updates an existing entry in the lockfile with a new LockfileEntry 
-        object.
-
-        If the object does not exist, adds it to the lockfile as a new entry.
-        """
-        self.entries[entry.name] = entry
 
     def get_entry(self, entry: LockfileEntry):
         """Gets a specified entry from the lockfile object."""
@@ -85,7 +81,7 @@ class Lockfile:
             new_key: the new key to reindex lockfile entries by
 
         Returns:
-            dict of reindexed lockfile entries, indexed by type
+            dict of reindexed lockfile entries
         """
 
         try:
