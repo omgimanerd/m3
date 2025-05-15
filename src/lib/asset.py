@@ -1,68 +1,69 @@
 """Classes for defining assets managed by m3."""
 
 
-from typing import Union
+from dataclasses import dataclass, field
+from typing import Self, Union
 
+from src.lib.json import dataclass_json
 from src.util.enum import AssetType, Platform, Side
 
 
+@dataclass_json
+@dataclass
 class Asset:
-    def __init__(self, name: str, platform: Platform, asset_type: AssetType,
-                 side: Side, cdn_link: str):
-        self.name = name
-        self.platform = platform
-        self.asset_type = asset_type
-        self.side = side
+    """Class for handling asset data managed by m3.
 
-        self.dependencies = []
+    Attributes:
+        name: A human-readable name for the asset
+        platform: The platform the asset is for (CurseForge, Modrinth, etc.)
+        asset_type: Mod, resource pack, texture pack, or shader pack etc.
+        side: Client, server, or both
+        dependencies: A list of assets this asset depends on
+        cdn_link: The link to download the asset from
+    """
+    name: str
+    platform: Platform
+    asset_type: AssetType
+    side: Side
+    dependencies: list[Self]
+    cdn_link: str
 
-        self.cdn_link = cdn_link
-
+    # pylint: disable-next=missing-function-docstring
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
         raise NotImplementedError('Subclass should implement this method')
 
 
+@dataclass_json
+@dataclass
 class CurseForgeAsset(Asset):
-    """Class wrapper for handling CurseForge lockfile entries."""
+    """Class wrapper for handling CurseForge lockfile entries.
 
-    def __init__(
-            self, name: str, asset_type: AssetType, side: Side, cdn_link: str,
-            project_id: int, file_id: int):
-        """
-        Args:
-            name: A human-readable name for the asset
-            asset_type: Mod, resource pack, texture pack, or shader pack etc.
-            side: Client, server, or both
-            cdn_link: The link to download the asset from
-            project_id: The unique identifier for the CurseForge project
-            file_id: The unique identifier for the CurseForge asset file
-        """
-        super().__init__(name, Platform.CURSEFORGE, asset_type, side, cdn_link)
-        self.project_id = project_id
-        self.file_id = file_id
+    Attributes:
+        platform: The platform the asset is for (CurseForge)
+        project_id: The ID used to identify the project on CurseForge
+        file_id: The ID used to identify the asset file on CurseForge
+    """
+    platform: Platform = field(default=Platform.CURSEFORGE)
+    project_id: int
+    file_id: int
 
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
         return (self.project_id, self.file_id)
 
 
+@dataclass_json
+@dataclass
 class ModrinthAsset(Asset):
-    """Class wrapper for handling Modrinth lockfile entries."""
+    """Class wrapper for handling Modrinth lockfile entries.
 
-    def __init__(
-            self, name: str, asset_type: AssetType, side: Side, cdn_link: str,
-            slug: Union[int, str], hash_: str):
-        """
-        Args:
-            name: A human-readable name for the asset
-            asset_type: Mod, resource pack, texture pack, or shader pack etc.
-            side: Client, server, or both
-            cdn_link: The link to download the asset from
-            slug: The unique identifier for the Modrinth project
-            hash_: The hash of the Modrinth asset file
-        """
-        super().__init__(name, Platform.CURSEFORGE, asset_type, side, cdn_link)
-        self.slug = slug
-        self.hash = hash_
+    Attributes:
+        platform: The platform the asset is for (Modrinth)
+        slug: The unique name or ID used to identify the asset on Modrinth
+        hash_: The hash of the asset file
+    """
+    platform: Platform = field(default=Platform.MODRINTH)
+    slug: Union[int, str]
+    hash_: str
 
     def get_asset_identifier(self) -> tuple[Union[str, int], str]:
-        return (self.slug, self.hash)
+        return (self.slug, self.hash_)
