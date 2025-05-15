@@ -18,8 +18,8 @@ class HashEntry:
 class LockfileEntry:
     """Class for defining lockfile entries."""
     name: str
-    # TODO: Consider redesigning this into something simpler
-    hash: HashEntry = field(default_factory=HashEntry)
-    platform: Platform = field(default_factory=Platform)
-    asset_type: AssetType = field(default_factory=AssetType)
+    # TODO: Consider redesigning hash/HashEntry into something simpler
+    hash: HashEntry = field(default=HashEntry)
+    platform: Platform = field(default=Platform)
+    asset_type: AssetType = field(default=AssetType)
     asset: Asset = field(default_factory=Asset)
