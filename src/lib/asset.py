@@ -39,13 +39,14 @@ class CurseForgeAsset(Asset):
     """Class wrapper for handling CurseForge lockfile entries.
 
     Attributes:
-        platform: The platform the asset is for (CurseForge)
         project_id: The ID used to identify the project on CurseForge
         file_id: The ID used to identify the asset file on CurseForge
     """
-    platform: Platform = field(default=Platform.CURSEFORGE)
     project_id: int
     file_id: int
+
+    def __post_init__(self):
+        self.platform = Platform.CURSEFORGE
 
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
         return (self.project_id, self.file_id)
@@ -57,13 +58,14 @@ class ModrinthAsset(Asset):
     """Class wrapper for handling Modrinth lockfile entries.
 
     Attributes:
-        platform: The platform the asset is for (Modrinth)
         slug: The unique name or ID used to identify the asset on Modrinth
         hash_: The hash of the asset file
     """
-    platform: Platform = field(default=Platform.MODRINTH)
     slug: Union[int, str]
     hash_: str
+
+    def __post_init__(self):
+        self.platform = Platform.MODRINTH
 
     def get_asset_identifier(self) -> tuple[Union[str, int], str]:
         return (self.slug, self.hash_)
