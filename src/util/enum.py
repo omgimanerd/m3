@@ -24,6 +24,6 @@ class Side(Enum):
 class AssetType(Enum):
     """Asset types that m3 manages."""
     MOD = 'mod'
-    RESOURCE = 'resource'
-    TEXTURE = 'texture'
-    SHADER = 'shader'
+    RESOURCE_PACK = 'resource_pack'
+    TEXTURE_PACK = 'texture_pack'
+    SHADER_PACK = 'shader_pack'
