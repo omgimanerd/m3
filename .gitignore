@@ -8,3 +8,7 @@ venv/
 
 m3.json
 *m3.json.swp
+
+test/fixtures/
+
+.DS_Store
