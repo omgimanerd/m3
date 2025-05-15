@@ -6,9 +6,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Self
 
-from click import ClickException
+from click.exceptions import ClickException
 
-from src.util.enum import Platform, Side
+from src.config.lockfile_entry import LockfileEntry
+from src.util.dicts import reindex
+from src.util.enum import AssetType
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
@@ -29,7 +31,7 @@ class Lockfile:
           path: The path to attempt to search for a lockfile.
 
         Returns:
-          A Lockfile dataclass instance, or throws an ClickError if an invalid
+          A Lockfile dataclass instance, or throws an FireError if an invalid
           lockfile was found.
         """
         filepath = path / LOCKFILE_FILENAME
