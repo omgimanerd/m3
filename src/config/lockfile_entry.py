@@ -1,11 +1,14 @@
 """Class for defining m3's lockfile entries."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+
+from dataclasses_json import dataclass_json
 
 from src.lib.asset import Asset
 from src.util.enum import AssetType, Platform
 
 
+@dataclass_json
 @dataclass
 class HashEntry:
     """Dataclass wrapper for handling file hashes of different hash algorithms."""
@@ -14,6 +17,7 @@ class HashEntry:
     md5: str
 
 
+@dataclass_json
 @dataclass
 class LockfileEntry:
     """Class for defining lockfile entries."""
