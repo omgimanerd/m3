@@ -19,15 +19,15 @@ class Asset:
         platform: The platform the asset is for (CurseForge, Modrinth, etc.)
         asset_type: Mod, resource pack, texture pack, or shader pack etc.
         side: Client, server, or both
-        dependencies: A list of assets this asset depends on
         cdn_link: The link to download the asset from
+        dependencies: A list of assets this asset depends on
     """
     name: str
     platform: Platform
     asset_type: AssetType
     side: Side
-    dependencies: list[Self]
     cdn_link: str
+    dependencies: list[Self]
 
     # pylint: disable-next=missing-function-docstring
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
