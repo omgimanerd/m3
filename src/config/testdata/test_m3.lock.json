@@ -1,0 +1,31 @@
+{
+    "entries": {
+        "test-entry": {
+            "name": "test-entry",
+            "hash": {
+                "sha1": "sha1-hash",
+                "sha512": "sha512-hash",
+                "md5": "md5-hash"
+            },
+            "platform": "curseforge",
+            "asset_type": "mod",
+            "asset": {
+                "name": "test-mod",
+                "platform": "curseforge",
+                "asset_type": "mod",
+                "side": "both",
+                "dependencies": [
+                    {
+                        "name": "test-resource-pack",
+                        "platform": "curseforge",
+                        "asset_type": "resource_pack",
+                        "side": "both",
+                        "dependencies": [],
+                        "cdn_link": "test-cdn-link-resource-pack"
+                    }
+                ],
+                "cdn_link": "test-cdn-link"
+            }
+        }
+    }
+}

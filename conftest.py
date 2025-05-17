@@ -8,7 +8,8 @@ import pytest
 # Fixtures defined in modules in this project.
 # pylint: disable-next=invalid-name
 pytest_plugins = (
-    "src.config.config_test_util"
+    "src.config.config_test_util",
+    "src.config.lockfile_test_util"
 )
 
 

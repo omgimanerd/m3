@@ -1,6 +1,7 @@
 """Dataclass wrapper for handling m3's lockfile"""
 
 import json
+import os
 from collections.abc import Callable
 from pathlib import Path
 from typing import Optional, Self
@@ -20,8 +21,8 @@ LOCKFILE_FILENAME = 'm3.lock.json'
 @dataclass
 class Lockfile:
     """Dataclass wrapper for handling m3's lockfile"""
-    entries: dict[str, LockfileEntry]
-    _path: Path
+    entries: dict[str, LockfileEntry] = field(default_factory=dict)
+    _path: Path = PathField(Path(os.getcwd()) / LOCKFILE_FILENAME)
 
     @staticmethod
     def create(path: Path) -> Optional[Self]:
