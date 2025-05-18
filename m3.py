@@ -13,7 +13,7 @@ from src.cli.list import List
 from src.cli.prune import Prune
 from src.cli.remove import Remove
 from src.cli.status import Status
-from src.util.click_helpers import AliasGroup
+from src.util.click import AliasGroup
 
 
 @click.group(context_settings={

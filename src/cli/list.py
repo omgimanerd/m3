@@ -2,7 +2,7 @@
 
 import click
 
-from src.util.click_helpers import command_with_aliases
+from src.util.click import command_with_aliases
 
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
