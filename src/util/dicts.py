@@ -1,4 +1,5 @@
 """Utility file with dict manipulation functions."""
+
 from collections.abc import Callable
 
 

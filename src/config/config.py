@@ -37,7 +37,7 @@ class Config:
     # The name of the project
     name: str
     # The version of the project
-    version: str
+    version: str = ""
     # CurseForge or Modrinth
     platform: Platform = field(default=Platform.CURSEFORGE)
     # Authors of the project

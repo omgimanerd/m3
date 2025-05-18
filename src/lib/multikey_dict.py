@@ -1,6 +1,6 @@
 """Class for multikey dicts."""
 
-from typing import Hashable
+from collections.abc import Hashable
 
 
 class MultiKeyDict:

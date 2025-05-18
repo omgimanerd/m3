@@ -9,10 +9,10 @@ from src.util.enum import Platform
 
 def test_config_creation():
     """Tests that creating an empty config results in a valid config."""
-    c = Config(name="test-config", version="test")
+    c = Config(name="test-config")
     assert c == Config(
         name="test-config",
-        version="test",
+        version="",
         platform=Platform.CURSEFORGE,
         authors=[],
         paths=ProjectPaths(
@@ -29,7 +29,7 @@ def test_config_creation():
     )
 
 
-def test_config_read(config_from_path, current_dir, tmp_path, read_file):
+def test_config_read_write(config_from_path, current_dir, tmp_path, read_file):
     """Tests reading a config from disk and writing it back results in an
     identical JSON."""
     c = config_from_path("testdata/test_m3.json")
