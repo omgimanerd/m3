@@ -10,13 +10,16 @@ from src.util.enum import AssetType, Platform, Side
 
 def test_lockfile_creation():
     """Tests that creating an empty lockfile results in a valid lockfile."""
+    # We do not have to assert that _path matches because it defaults to the
+    # same value
     l = Lockfile()
     assert l == Lockfile(
         entries={}
     )
 
 
-def test_lockfile_read(lockfile_from_path):
+def test_lockfile_read_write(
+        lockfile_from_path, current_dir, tmp_path, read_file):
     """Tests reading a lockfile from disk."""
     l = lockfile_from_path("testdata/test_m3.lock.json")
     assert l == Lockfile(
@@ -36,14 +39,7 @@ def test_lockfile_read(lockfile_from_path):
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
                     dependencies=[
-                        Asset(
-                            name="test-resource-pack",
-                            platform=Platform.CURSEFORGE,
-                            asset_type=AssetType.RESOURCE_PACK,
-                            side=Side.BOTH,
-                            dependencies=[],
-                            cdn_link="test-cdn-link-resource-pack"
-                        )
+                        "test-entry-dependency"
                     ],
                     cdn_link="test-cdn-link"
                 )
@@ -51,6 +47,12 @@ def test_lockfile_read(lockfile_from_path):
         },
         _path=l.get_path()
     )
+
+    # Write the lockfile back to a file and compare the contents.
+    output_path = tmp_path / LOCKFILE_FILENAME
+    l.write(output_path)
+    assert read_file(
+        current_dir / "testdata/test_m3.lock.json") == read_file(output_path)
 
 
 def test_lockfile_write_read(lockfile_from_path, tmp_path):
@@ -74,14 +76,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
                     dependencies=[
-                        Asset(
-                            name="test-resource-pack",
-                            platform=Platform.CURSEFORGE,
-                            asset_type=AssetType.RESOURCE_PACK,
-                            side=Side.BOTH,
-                            dependencies=[],
-                            cdn_link="test-cdn-link-resource-pack"
-                        )
+                        "test-entry-dependency"
                     ],
                     cdn_link="test-cdn-link"
                 )
@@ -110,14 +105,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                     "asset_type": "mod",
                     "side": "both",
                     "dependencies": [
-                        {
-                            "name": "test-resource-pack",
-                            "platform": "curseforge",
-                            "asset_type": "resource_pack",
-                            "side": "both",
-                            "dependencies": [],
-                            "cdn_link": "test-cdn-link-resource-pack"
-                        }
+                        "test-entry-dependency"
                     ],
                     "cdn_link": "test-cdn-link"
                 }

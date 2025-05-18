@@ -14,17 +14,10 @@
         "platform": "curseforge",
         "asset_type": "mod",
         "side": "both",
+        "cdn_link": "test-cdn-link",
         "dependencies": [
-          {
-            "name": "test-resource-pack",
-            "platform": "curseforge",
-            "asset_type": "resource_pack",
-            "side": "both",
-            "dependencies": [],
-            "cdn_link": "test-cdn-link-resource-pack"
-          }
-        ],
-        "cdn_link": "test-cdn-link"
+          "test-entry-dependency"
+        ]
       }
     }
   }
