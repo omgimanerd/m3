@@ -5,7 +5,7 @@ import os
 from collections.abc import Callable
 from dataclasses import field
 from pathlib import Path
-from typing import Optional, Self
+from typing import Optional, Self, Union
 
 from click.exceptions import ClickException
 from pydantic.dataclasses import dataclass
@@ -55,9 +55,15 @@ class Lockfile:
         """Returns the path of the lockfile."""
         return self._path
 
-    def write(self):
-        """Writes the state of this lockfile object to the file."""
-        with open(self._path, 'w', encoding='utf-8') as f:
+    def write(self, path: Optional[Union[Path, str]] = None):
+        """Writes the state of this lockfile object to the file.
+
+        Args:
+            path: An optional path argument to write the lockfile to, otherwise 
+            writes to the default _path member stored in the lockfile.
+        """
+        with open(path if path is not None else self._path, "w",
+                  encoding="utf-8") as f:
             # pylint: disable-next=no-member
             f.write(self.json())
 
