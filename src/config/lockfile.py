@@ -3,6 +3,7 @@
 import json
 import os
 from collections.abc import Callable
+from dataclasses import field
 from pathlib import Path
 from typing import Optional, Self
 
@@ -10,7 +11,7 @@ from click.exceptions import ClickException
 from pydantic.dataclasses import dataclass
 
 from src.config.lockfile_entry import LockfileEntry
-from src.lib.dataclasses import dataclass_json
+from src.lib.dataclasses import PathField, dataclass_json
 from src.util.dicts import reindex
 from src.util.enum import AssetType
 
@@ -49,6 +50,10 @@ class Lockfile:
         except TypeError as e:
             raise ClickException(
                 f'Invalid {LOCKFILE_FILENAME} found at {filepath}') from e
+
+    def get_path(self) -> Path:
+        """Returns the path of the lockfile."""
+        return self._path
 
     def write(self):
         """Writes the state of this lockfile object to the file."""
