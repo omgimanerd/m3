@@ -53,7 +53,8 @@ class Lockfile:
     def write(self):
         """Writes the state of this lockfile object to the file."""
         with open(self._path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(self, indent=2))
+            # pylint: disable-next=no-member
+            f.write(self.json())
 
     def add_entry(self, entry: LockfileEntry):
         """Adds a specified entry to the lockfile object.
