@@ -27,7 +27,7 @@ class Asset:
     asset_type: AssetType
     side: Side
     cdn_link: str
-    dependencies: list[Self]
+    dependencies: list[str]
 
     # pylint: disable-next=missing-function-docstring
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
