@@ -29,8 +29,9 @@ def test_config_creation():
     )
 
 
-def test_config_read(tmp_path, config_from_path):
-    """Tests reading a config from disk."""
+def test_config_read(config_from_path, current_dir, tmp_path, read_file):
+    """Tests reading a config from disk and writing it back results in an
+    identical JSON."""
     c = config_from_path("testdata/test_m3.json")
     assert c == Config(
         name="test-config",
@@ -50,7 +51,11 @@ def test_config_read(tmp_path, config_from_path):
         server_excludes=[Path("path/to/exclude_server")],
         _path=c.get_path()
     )
-    # Write the config back to a temporary directory and compare the contents.
+    # Write the config back to a file and compare the contents.
+    output_path = tmp_path / CONFIG_FILENAME
+    c.write(output_path)
+    assert read_file(
+        current_dir / 'testdata/test_m3.json') == read_file(output_path)
 
 
 def test_config_write_read(tmp_path, config_from_path):

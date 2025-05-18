@@ -99,6 +99,7 @@ class Config:
         """
         with open(path if path is not None else self._path, "w",
                   encoding="utf-8") as f:
+            # This is added by the @dataclass_json decorator
             # pylint: disable-next=no-member
             f.write(self.json())
 
