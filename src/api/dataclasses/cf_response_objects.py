@@ -1,6 +1,9 @@
 """Dataclasses for the CurseForge API to process response data."""
-from dataclasses import dataclass
+
+
 from typing import Optional
+
+from pydantic.dataclasses import dataclass
 
 
 @dataclass

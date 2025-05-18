@@ -1,10 +1,11 @@
 """Classes for defining assets managed by m3."""
 
 
-from dataclasses import dataclass, field
 from typing import Self, Union
 
-from src.lib.json import dataclass_json
+from pydantic.dataclasses import dataclass
+
+from src.lib.dataclasses import dataclass_json
 from src.util.enum import AssetType, Platform, Side
 
 

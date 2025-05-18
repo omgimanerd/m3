@@ -1,6 +1,6 @@
 """Dataclass representing the Curseforge manifest.json file."""
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 
 
 @dataclass

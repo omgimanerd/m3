@@ -2,19 +2,21 @@
 
 import json
 from collections.abc import Callable
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Self
 
 from click.exceptions import ClickException
+from pydantic.dataclasses import dataclass
 
 from src.config.lockfile_entry import LockfileEntry
+from src.lib.dataclasses import dataclass_json
 from src.util.dicts import reindex
 from src.util.enum import AssetType
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 
 
+@dataclass_json
 @dataclass
 class Lockfile:
     """Dataclass wrapper for handling m3's lockfile"""
@@ -55,7 +57,7 @@ class Lockfile:
     def add_entry(self, entry: LockfileEntry):
         """Adds a specified entry to the lockfile object.
 
-        If the object exists, updates the existing entry in the lockfile with a 
+        If the object exists, updates the existing entry in the lockfile with a
         new LockfileEntry object.
         """
         self.entries[entry.name] = entry

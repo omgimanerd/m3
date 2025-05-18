@@ -43,12 +43,12 @@ class MultiKeyDict:
         return super().__getattribute__(key)
 
     def is_existing_key(self, key: Hashable) -> bool:
-        """Returns True if the given key is an existing key in the 
+        """Returns True if the given key is an existing key in the
         keys_to_multikey map."""
         return key in self.keys_to_multikeys
 
     def is_existing_multikey(self, key: tuple) -> bool:
-        """Returns True if a given multikey is an existing multikey for the 
+        """Returns True if a given multikey is an existing multikey for the
         dict."""
         return key in self.data
 
