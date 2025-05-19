@@ -2,7 +2,7 @@
 
 
 from src.config.config import Config
-from src.lib.copier import copy
+from src.lib.copy import copy
 from src.util.click import command_with_aliases
 
 TMP_DIR = '.tmp'

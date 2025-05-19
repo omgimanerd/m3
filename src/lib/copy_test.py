@@ -3,7 +3,7 @@
 from glob import glob
 from pathlib import Path
 
-from src.lib.copier import copy
+from src.lib.copy import copy
 
 
 def get_files(root_dir: Path) -> list[str]:
@@ -18,13 +18,13 @@ def test_copy(current_dir, tmp_path):
     """Tests different permutations of inclusion and exclusion patterns."""
     testdata_dir = current_dir / "testdata" / "test_copy"
     copy(testdata_dir, tmp_path, [
-        "config",
-        "kubejs",
+        "config/**",
+        "kubejs/**",
         'important_*'
     ], [
-        "*file_to_ignore",
-        "*jsconfig.json",
-        "*generator_script.py",
+        "**/file_to_ignore",
+        "**/jsconfig.json",
+        "**/generator_script.py",
     ])
     assert get_files(tmp_path) == [
         'config/config.json',
@@ -38,19 +38,20 @@ def test_copy(current_dir, tmp_path):
 
 
 def test_copy2(current_dir, tmp_path):
+    """Tests different permutations of inclusion and exclusion patterns."""
     testdata_dir = current_dir / "testdata" / "test_copy"
     copy(testdata_dir, tmp_path, [
-        "config",
-        "kubejs",
+        "config/**",
+        "kubejs/**",
         "important_file",
     ], [
-        "*file_to_ignore",
-        "kubejs/assets",
+        "**/file_to_ignore",
+        "kubejs/assets/**",
+        "**/dev*"
     ])
     assert get_files(tmp_path) == [
         'config/config.json',
         'important_file',
-        'kubejs/dev_script.js',
         'kubejs/jsconfig.json',
         'kubejs/script1.js'
     ]
