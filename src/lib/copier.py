@@ -1,18 +1,15 @@
-"""Module to handle packing up the configured files into a zipfile."""
+"""Module to handle copying over a list of inclusion/exclusion glob patterns."""
 
 import os
 import shutil
 from fnmatch import fnmatch
 from glob import glob
 from pathlib import Path
-
-from src.config.config import Config
-
-TMP_DIR = ".tmp"
+from typing import Callable, Optional
 
 
-def copy_files(root: Path, dest: Path, include: list[Path],
-               exclude: list[Path]):
+def copy(root: Path, dest: Path, include: list[Path], exclude: list[Path],
+         callback: Optional[Callable[[str], None]] = None):
     """Copies all of the include patterns rooted at root into destination,
     excluding any files that match the exclusion pattern.
 
@@ -22,6 +19,8 @@ def copy_files(root: Path, dest: Path, include: list[Path],
         dest: the path to the copy matching patterns to
         include: a list of globs to include
         exclude: a list of globs to exclude
+        callback: an optional callback that will be invoked with each file that
+            is copied, can be used to provide logging or other functionality
     """
     def ignore_callback(path, names):
         """Argument to shutil.copytree's ignore argument.
@@ -45,13 +44,16 @@ def copy_files(root: Path, dest: Path, include: list[Path],
     def copy_callback(src, dst, *args, **kwargs):
         """Argument to shutil.copytree's copy function, defers the call to
         shutil.copy2."""
-        print(f"Copying {src.replace(str(root), "")}")
+        if callback is not None:
+            callback(src.replace(str(root)))
         return shutil.copy2(src, dst, *args, **kwargs)
 
     for pattern in include:
-        for match in glob(pattern, root_dir=root, recursive=True):
-            source = Path(root / match)
-            target = Path(dest / match)
+        # Get all matching files and paths for the inclusion glob.
+        for match in glob(pattern, root_dir=root, recursive=True,
+                          include_hidden=True):
+            source = root / match
+            target = dest / match
             if source.is_dir():
                 shutil.copytree(source.absolute(), target.absolute(),
                                 ignore=ignore_callback, copy_function=copy_callback,
@@ -59,25 +61,3 @@ def copy_files(root: Path, dest: Path, include: list[Path],
             else:
                 os.makedirs(target.parent, exist_ok=True)
                 shutil.copyfile(source.absolute(), target)
-
-
-def export(config: Config):
-    """Handles exporting the client and server pack to the designated output
-    directory as specified by the given config, using the provided inclusion
-    and exclusion globs.
-
-    Args:
-      config: the m3 configuration to read
-    """
-    minecraft_dir = config.get_path().parent
-    tmp_dir = config.output / TMP_DIR
-
-    # Build and write the client output
-    client_dir = tmp_dir / "client"
-    copy_files(minecraft_dir, client_dir,
-               config.client_includes, config.client_excludes)
-
-    # Build and write the server output
-    server_dir = tmp_dir / "server"
-    copy_files(minecraft_dir, server_dir,
-               config.server_includes, config.server_excludes)
