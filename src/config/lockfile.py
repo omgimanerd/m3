@@ -16,6 +16,8 @@ from src.util.dicts import reindex
 from src.util.enum import AssetType
 
 LOCKFILE_FILENAME = 'm3.lock.json'
+HASH_ALGS = ['sha1', 'sha512', 'md5']
+DEFAULT_ALG = 'sha512'
 
 
 @dataclass_json
@@ -64,7 +66,7 @@ class Lockfile:
         """
         with open(path if path is not None else self._path, "w",
                   encoding="utf-8") as f:
-            # This is added by the @dataclass_json decorator
+            # This is added by the @dataclass_json decorator,
             # pylint: disable-next=no-member
             f.write(self.json())
 
