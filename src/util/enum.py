@@ -27,3 +27,10 @@ class AssetType(Enum):
     RESOURCE_PACK = 'resource_pack'
     TEXTURE_PACK = 'texture_pack'
     SHADER_PACK = 'shader_pack'
+
+
+class HashAlg(Enum):
+    """Hash algorithms that m3 supports."""
+    SHA1 = 'sha1'
+    SHA512 = 'sha12'
+    MD5 = 'md5'
