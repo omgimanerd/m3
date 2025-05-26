@@ -1,0 +1,17 @@
+{
+  "sha1": {
+    "5a68d4de21d014dec4b203f0250a6292b07141bc": "a.jar",
+    "0d2c6faea74bbea5a84bc1526c5a8341e748efba": "b.jar",
+    "b170a89f64c06516cfd8691f81024488c83acdfc": "c.zip"
+  },
+  "sha512": {
+    "42b1e318d88d76c2eec1b37f5433dcfecba7d882c4f408dafcf1beb4d5da66f2374b68f455eca1fa29891984b71453a2c43bfc4d5a5b69f5c992144dc97d94ab": "a.jar",
+    "4e5b708cdd54a150b3e962740e1d9eaea41a097d6714ca8dfd133e8c78f1f0e7b7a27ea0c69cd9656bcb52b40a07fd36d54ec5bba1b3fe2db6969a2fb40c3f5d": "b.jar",
+    "ab2fc52fb556ee9af6c9be54c68aaafc24268c086a88e2dc1145b342c8c60c7077b2d36d48ae0b83e8e7fce8de4836df68734a0ee7bac23708b1b80cc7c3bf08": "c.zip"
+  },
+  "md5": {
+    "5d4621142f65fc333c8b3bdc6b3dcd81": "a.jar",
+    "74313415ec24a454607fb57cede35fd8": "b.jar",
+    "1602f76e5c5595edcc1f81ed30ca8b28": "c.zip"
+  }
+}
