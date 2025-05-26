@@ -35,13 +35,6 @@ class MultiKeyDict:
             raise ValueError(
                 f'Expected {self.num_of_keys} keys, got {len(multikey)}')
 
-    def __getattribute__(self, key: Hashable) -> any:
-        """Get data associated with key if it exists, else try treating the arg
-        as an attribute."""
-        if key in self.keys_to_multikeys:
-            return self.get(key)
-        return super().__getattribute__(key)
-
     def is_existing_key(self, key: Hashable) -> bool:
         """Returns True if the given key is an existing key in the
         keys_to_multikey map."""
@@ -93,7 +86,7 @@ class MultiKeyDict:
         Returns:
             The data associated with the given key or None.
         """
-        return self.data.get(self.keys.get(key, None), None)
+        return self.data.get(self.keys_to_multikeys.get(key, None), None)
 
     def len(self) -> int:
         """Returns the number of data entries."""
