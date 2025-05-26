@@ -14,10 +14,10 @@ from src.config.lockfile_entry import HashEntry, LockfileEntry
 from src.lib.dataclasses import PathField, dataclass_json
 from src.lib.multikey_dict import MultiKeyDict
 from src.util.dicts import reindex
-from src.util.enum import AssetType
+from src.util.enum import AssetType, HashAlg
 
 LOCKFILE_FILENAME = 'm3.lock.json'
-HASH_ALGS = ['sha1', 'sha512', 'md5']
+HASH_ALGS = [HashAlg.SHA1, HashAlg.SHA512, HashAlg.MD5]
 DEFAULT_ALG = 'sha512'
 
 
@@ -144,7 +144,7 @@ class Lockfile:
             keys = [entry.name]
             for alg in HASH_ALGS:
                 try:
-                    keys.append(getattr(entry.hash, alg))
+                    keys.append(getattr(entry.hash, str(alg)))
                 except AttributeError as error:
                     raise AttributeError(
                         f'Expected to find hashing alg {alg}' +
