@@ -1,5 +1,6 @@
 """Utility file with hashing functions."""
 
+import glob
 import hashlib
 from pathlib import Path
 from typing import Union
@@ -37,10 +38,12 @@ def hash_asset_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
         A dict indexed by the file hash containing the file hash and file name.
     """
     hashes = {}
-    asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
+    asset_files = list(glob.glob(str(dir_ / '**/*.jar'), recursive=True)
+                       ) + list(glob.glob(str(dir_ / '**/*.zip'), recursive=True))
     for file in asset_files:
+        path_object = Path(file)
         file_hash = hash_file(file, alg)
-        hashes[file_hash] = file.name
+        hashes[file_hash] = path_object.name
 
     return hashes
 
@@ -63,14 +66,16 @@ def hash_asset_dir_multi_hash(dir_: Union[str, Path],
         asset file, containing the path to the asset file.
     """
     multikey_dict = MultiKeyDict(len(algs) + 1)
-    asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
-    for path in asset_files:
-        keys = [path.name]
+    asset_files = list(glob.glob(str(dir_ / '**/*.jar'), recursive=True)
+                       ) + list(glob.glob(str(dir_ / '**/*.zip'), recursive=True))
+    for file in asset_files:
+        path_object = Path(file)
+        keys = [path_object.name]
         for alg in algs:
-            file_hash = hash_file(path, alg)
+            file_hash = hash_file(file, alg)
             keys.append(file_hash)
         multikey = tuple(keys)
 
-        multikey_dict.add(multikey, path)
+        multikey_dict.add(multikey, path_object)
 
     return multikey_dict
