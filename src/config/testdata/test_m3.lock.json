@@ -16,8 +16,26 @@
         "side": "both",
         "cdn_link": "test-cdn-link",
         "dependencies": [
-          "test-entry-dependency"
+          "test-texture-pack"
         ]
+      }
+    },
+    "test-texture-pack": {
+      "name": "test-texture-pack",
+      "hash": {
+        "sha1": "sha1-hash-texture",
+        "sha512": "sha512-hash-texture",
+        "md5": "md5-hash-texture"
+      },
+      "platform": "curseforge",
+      "asset_type": "texture_pack",
+      "asset": {
+        "name": "test-texture-pack",
+        "platform": "curseforge",
+        "asset_type": "texture_pack",
+        "side": "both",
+        "cdn_link": "test-cdn-link",
+        "dependencies": []
       }
     }
   }

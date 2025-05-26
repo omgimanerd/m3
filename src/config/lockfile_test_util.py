@@ -23,8 +23,8 @@ def lockfile_from_path(current_dir) -> Callable[[Path], Lockfile]:
 
 @pytest.fixture
 def lockfile_entry_from_path(current_dir) -> Callable[[Path], LockfileEntry]:
-    """Test fixture that returns a helper function to create a LockfileEntry from a 
-    known path."""
+    """Test fixture that returns a helper function to create a LockfileEntry
+    from a known path."""
     def _lockfile_entry_from_path(relpath):
         fullpath = current_dir / relpath
         with open(fullpath, 'r', encoding='utf-8') as f:
