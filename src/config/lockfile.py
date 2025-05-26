@@ -10,8 +10,9 @@ from typing import Optional, Self, Union
 from click.exceptions import ClickException
 from pydantic.dataclasses import dataclass
 
-from src.config.lockfile_entry import LockfileEntry
+from src.config.lockfile_entry import HashEntry, LockfileEntry
 from src.lib.dataclasses import PathField, dataclass_json
+from src.lib.multikey_dict import MultiKeyDict
 from src.util.dicts import reindex
 from src.util.enum import AssetType
 
@@ -125,3 +126,31 @@ class Lockfile:
         """
         return {name: entry for name, entry in self.entries.items()
                 if entry.asset_type == asset_type}
+
+    def create_multikey_dict_for_lockfile(self):
+        """Creates a multikey dict containing the lockfile entries, where the
+        multikey is the name of the asset and the hashes of the asset file.
+
+        Note that the order of the hash algorithm matters and must be
+        consistent.
+
+        Returns:
+            A multikey dict where the multikey is the name of the asset and the
+            hashes of the asset file, using the list of supported hash
+            algorithms.
+        """
+        multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
+        for entry in self.entries.values():
+            keys = [entry.name]
+            for alg in HASH_ALGS:
+                try:
+                    keys.append(getattr(entry.hash, alg))
+                except AttributeError as error:
+                    raise AttributeError(
+                        f'Expected to find hashing alg {alg}' +
+                        ' as attribute of HashEntry, not found') from error
+            multikey = tuple(keys)
+
+            multikey_dict.add(multikey, entry)
+
+        return multikey_dict
