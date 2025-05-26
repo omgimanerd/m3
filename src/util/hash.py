@@ -4,7 +4,7 @@ import hashlib
 from pathlib import Path
 from typing import Union
 
-from click import ClickException
+from src.lib.multikey_dict import MultiKeyDict
 
 
 def hash_file(filename: Union[str, Path], alg: str) -> str:
@@ -22,7 +22,7 @@ def hash_file(filename: Union[str, Path], alg: str) -> str:
     return digest.hexdigest()
 
 
-def hash_jar_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
+def hash_asset_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
     """Returns a dict containing hashes of all .jar and .zip files in the given
     directory.
 
@@ -37,40 +37,40 @@ def hash_jar_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
         A dict indexed by the file hash containing the file hash and file name.
     """
     hashes = {}
-    for path in sorted(Path(dir_).iterdir(), key=lambda p: str(p).lower()):
-        if path.is_file() and (path.suffix in (".jar", ".zip")):
-            file_hash = hash_file(path, alg)
-            hashes[file_hash] = path.name
+    asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
+    for file in asset_files:
+        file_hash = hash_file(file, alg)
+        hashes[file_hash] = file.name
 
     return hashes
 
 
-def hash_jar_dir_multi_hash(
-        dir_: Union[str, Path], algs: list[str], default_alg: str) -> dict:
-    """Returns a dict keyed on the indicated default hashing alg.
+def hash_asset_dir_multi_hash(dir_: Union[str, Path],
+                              algs: list[str]) -> dict[tuple, Union[str, Path]]:
+    """Returns a multikey dict containing the path to the corresponding asset
+    file path.
 
-    The dict holds a dict with hashes of a .jar file in the given directory 
-    along with its file name.
+    The multikey consists of the name of the asset and hashes of the asset files
+    using the provided list of hashing algorithms. Note that the order of the 
+    hashing algorithm matters and must be consistent.
 
     Args:
-        dir_: The directory to search for .jar files to hash
-        algs: The hashing algorithms to use when generating hashes for the file
-        default_alg: the hashing alg to use when generating the hash to key on
+        dir_: The directory to search for .jar files to hash algs: The hashing
+        algorithms to use when generating hashes for the file
 
     Returns:
-        A dict keyed on the hash of a .jar file using the default alg, 
-        containing a dict with the file name and all the hashes generated for a 
-        given file.
+        A multikey dict keyed on the asset name and generated hashes of the
+        asset file, containing the path to the asset file.
     """
-    if default_alg not in algs:
-        raise ClickException('Default hashing alg must be included in alg list')
-    hashes = {}
-    for path in sorted(Path(dir_).iterdir(), key=lambda p: str(p).lower()):
-        if path.is_file() and (path.suffix in (".jar", ".zip")):
-            file_data = {}
-            for hash_ in algs:
-                file_hash = hash_file(path, hash_)
-                file_data[hash_] = file_hash
-            file_data['file_name'] = path.name
-            hashes[file_data[default_alg]] = file_data
-    return hashes
+    multikey_dict = MultiKeyDict(len(algs) + 1)
+    asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
+    for path in asset_files:
+        keys = [path.name]
+        for alg in algs:
+            file_hash = hash_file(path, alg)
+            keys.append(file_hash)
+        multikey = tuple(keys)
+
+        multikey_dict.add(multikey, path)
+
+    return multikey_dict
