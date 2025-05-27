@@ -32,5 +32,5 @@ class AssetType(Enum):
 class HashAlg(Enum):
     """Hash algorithms that m3 supports."""
     SHA1 = 'sha1'
-    SHA512 = 'sha12'
+    SHA512 = 'sha512'
     MD5 = 'md5'
