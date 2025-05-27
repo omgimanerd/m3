@@ -18,7 +18,7 @@ from src.util.enum import AssetType, HashAlg
 
 LOCKFILE_FILENAME = 'm3.lock.json'
 HASH_ALGS = [HashAlg.SHA1, HashAlg.SHA512, HashAlg.MD5]
-DEFAULT_ALG = 'sha512'
+DEFAULT_ALG = HashAlg.SHA512
 
 
 @dataclass_json
@@ -142,7 +142,7 @@ class Lockfile:
         multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
         for entry in self.entries.values():
             keys = [entry.name]
-            for alg in HASH_ALGS:
+            for alg in sorted(HASH_ALGS):
                 try:
                     keys.append(entry.hash[alg])
                 except AttributeError as error:
