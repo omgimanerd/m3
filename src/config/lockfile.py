@@ -142,7 +142,7 @@ class Lockfile:
         multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
         for entry in self.entries.values():
             keys = [entry.name]
-            for alg in sorted(HASH_ALGS):
+            for alg in sorted(HASH_ALGS, key=lambda member: member.value):
                 try:
                     keys.append(entry.hash[alg])
                 except AttributeError as error:
