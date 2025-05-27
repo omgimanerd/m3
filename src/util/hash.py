@@ -66,7 +66,7 @@ def hash_asset_dir_multi_hash(dir_: Union[str, Path],
     asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
     for path in asset_files:
         keys = [path.name]
-        for alg in algs:
+        for alg in sorted(algs):
             file_hash = hash_file(path, alg)
             keys.append(file_hash)
         multikey = tuple(keys)
