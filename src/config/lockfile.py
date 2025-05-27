@@ -150,7 +150,6 @@ class Lockfile:
                         f'Expected to find hashing alg {alg}' +
                         ' as attribute of HashEntry, not found') from error
             multikey = tuple(keys)
-
             multikey_dict.add(multikey, entry)
 
         return multikey_dict
