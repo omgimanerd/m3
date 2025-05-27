@@ -18,8 +18,7 @@ def hash_file(filename: Path, alg: str) -> str:
         A hash of the given file as a string.
     """
     with open(filename, 'rb') as f:
-        digest = hashlib.file_digest(f, alg)
-    return digest.hexdigest()
+        return hashlib.file_digest(f, alg).hexdigest()
 
 
 def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
@@ -39,8 +38,7 @@ def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
     hashes = {}
     asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
     for file in asset_files:
-        file_hash = hash_file(file, alg)
-        hashes[file_hash] = file.name
+        hashes[hash_file(file, alg.value)] = file.name
 
     return hashes
 
@@ -66,9 +64,8 @@ def hash_asset_dir_multi_hash(dir_: Path,
     asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
     for path in asset_files:
         keys = [path.name]
-        for alg in sorted(algs):
-            file_hash = hash_file(path, alg)
-            keys.append(file_hash)
+        for alg in sorted(algs, key=lambda member: member.value):
+            keys.append(hash_file(path, alg.value))
         multikey = tuple(keys)
 
         multikey_dict.add(multikey, path)
