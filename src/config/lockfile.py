@@ -144,7 +144,7 @@ class Lockfile:
             keys = [entry.name]
             for alg in HASH_ALGS:
                 try:
-                    keys.append(getattr(entry.hash, str(alg)))
+                    keys.append(entry.hash[alg])
                 except AttributeError as error:
                     raise AttributeError(
                         f'Expected to find hashing alg {alg}' +

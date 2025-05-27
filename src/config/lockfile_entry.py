@@ -4,7 +4,7 @@ from pydantic.dataclasses import dataclass
 
 from src.lib.asset import Asset
 from src.lib.dataclasses import dataclass_json
-from src.util.enum import AssetType, Platform
+from src.util.enum import AssetType, HashAlg, Platform
 
 
 @dataclass_json
@@ -14,6 +14,12 @@ class HashEntry:
     sha1: str
     sha512: str
     md5: str
+
+    def __getitem__(self, name: HashAlg):
+        if isinstance(name, str):
+            return getattr(self, str(name))
+        raise TypeError(
+            f'Expected str for HashEntry attribute, got {type(name)}')
 
 
 @dataclass_json
