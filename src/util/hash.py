@@ -2,12 +2,12 @@
 
 import hashlib
 from pathlib import Path
-from typing import Union
 
 from src.lib.multikey_dict import MultiKeyDict
+from src.util.enum import HashAlg
 
 
-def hash_file(filename: Union[str, Path], alg: str) -> str:
+def hash_file(filename: Path, alg: str) -> str:
     """Returns the hash of the given file using the specified hashing algorithm.
 
     Args:
@@ -22,7 +22,7 @@ def hash_file(filename: Union[str, Path], alg: str) -> str:
     return digest.hexdigest()
 
 
-def hash_asset_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
+def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
     """Returns a dict containing hashes of all .jar and .zip files in the given
     directory.
 
@@ -45,8 +45,8 @@ def hash_asset_dir(dir_: Union[str, Path], alg: str) -> dict[str, str]:
     return hashes
 
 
-def hash_asset_dir_multi_hash(dir_: Union[str, Path],
-                              algs: list[str]) -> dict[tuple, Union[str, Path]]:
+def hash_asset_dir_multi_hash(dir_: Path,
+                              algs: list[HashAlg]) -> dict[tuple, Path]:
     """Returns a multikey dict containing the path to the corresponding asset
     file path.
 
