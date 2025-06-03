@@ -11,3 +11,13 @@ if [[ ! $PYTHONPATH =~ "$(pwd)" ]]; then
   export PYTHONPATH="$PYTHONPATH:$(pwd):"
 fi
 echo "PYTHONPATH=$PYTHONPATH"
+
+curr_dir="$(dirname "$BASH_SOURCE[0]")"
+if [[ ! -d $curr_dir"/.git/hooks" ]]; then
+  echo ".git/hooks directory not found"
+  exit 1
+fi
+
+if [[ ! -f $git_path"/pre-commit" ]]; then
+  pre-commit install
+fi
