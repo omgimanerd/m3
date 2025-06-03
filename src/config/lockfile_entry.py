@@ -16,10 +16,10 @@ class HashEntry:
     md5: str
 
     def __getitem__(self, name: HashAlg):
-        if isinstance(name, str):
-            return getattr(self, str(name))
+        if isinstance(name, HashAlg):
+            return getattr(self, name.value)
         raise TypeError(
-            f'Expected str for HashEntry attribute, got {type(name)}')
+            f'Expected HashAlg for HashEntry attribute, got {type(name)}')
 
 
 @dataclass_json
