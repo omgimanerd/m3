@@ -26,6 +26,17 @@ class MultiKeyDict:
         self.keys_to_multikeys = {}
         self.data = {}
 
+    def __eq__(self, value):
+        if isinstance(value, MultiKeyDict):
+            if self.len() != value.len():
+                return False
+            if self.num_of_keys != value.num_of_keys:
+                return False
+            if self.keys_to_multikeys != value.keys_to_multikeys:
+                return False
+            return True
+        return False
+
     def _validate_multikey(self, multikey: tuple):
         """Validates that a given multikey contains the right number of keys.
 
