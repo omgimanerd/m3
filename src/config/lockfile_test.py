@@ -5,6 +5,7 @@ import json
 from src.config.lockfile import LOCKFILE_FILENAME, Lockfile
 from src.config.lockfile_entry import HashEntry, LockfileEntry
 from src.lib.asset import Asset
+from src.lib.multikey_dict import MultiKeyDict
 from src.util.enum import AssetType, Platform, Side
 
 
@@ -176,14 +177,9 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
     """Tests creating a multikey dict from a lockfile object."""
     lockfile = lockfile_from_path("testdata/test_m3.lock.json")
     multikey_dict = lockfile.create_multikey_dict_for_lockfile()
-    assert multikey_dict.len() == 2
-
-    multikey_dict_keys = multikey_dict.get_multikeys()
-    assert ("test-entry", "sha1-hash", "sha512-hash",
-            "md5-hash") in multikey_dict_keys
-    assert ("test-texture-pack", "sha1-hash-texture", "sha512-hash-texture",
-            "md5-hash-texture") in multikey_dict_keys
-    assert multikey_dict.get("test-entry") == LockfileEntry(
+    ref_dict = MultiKeyDict(4)
+    ref_dict.add(("test-entry", "md5-hash",
+                  "sha1-hash", "sha512-hash",), LockfileEntry(
         name="test-entry",
         hash=HashEntry(
             sha1="sha1-hash",
@@ -202,8 +198,9 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
             ],
             cdn_link="test-cdn-link"
         )
-    )
-    assert multikey_dict.get("test-texture-pack") == LockfileEntry(
+    ))
+    ref_dict.add(("test-texture-pack", "md5-hash-texture",
+                  "sha1-hash-texture", "sha512-hash-texture", ), LockfileEntry(
         name="test-texture-pack",
         hash=HashEntry(
             sha1="sha1-hash-texture",
@@ -220,4 +217,5 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
             dependencies=[],
             cdn_link="test-cdn-link"
         )
-    )
+    ))
+    assert multikey_dict == ref_dict
