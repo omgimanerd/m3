@@ -27,6 +27,9 @@ class MultiKeyDict:
         self.data = {}
 
     def __eq__(self, value):
+        """If the given value is a MultiKeyDict instance, compare it to self and
+        return True if the keys and data stored in the dicts are equal. Return
+        False otherwise."""
         if not isinstance(value, MultiKeyDict):
             return False
         if self.len() != value.len():
