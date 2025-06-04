@@ -37,6 +37,13 @@ class MultiKeyDict:
             return False
         return True
 
+    def __getitem__(self, key: Hashable):
+        """Get data associated with key if it exists, else try treating arg as 
+        an attribute."""
+        if key in self.keys_to_multikeys:
+            return self.get(key)
+        return super().__getattribute__(key)
+
     def _validate_multikey(self, multikey: tuple):
         """Validates that a given multikey contains the right number of keys.
 
