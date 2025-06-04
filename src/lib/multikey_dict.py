@@ -38,7 +38,7 @@ class MultiKeyDict:
         return True
 
     def __getitem__(self, key: Hashable):
-        """Get data associated with key if it exists, else try treating arg as 
+        """Get data associated with key if it exists, else try treating arg as
         an attribute."""
         if key in self.keys_to_multikeys:
             return self.get(key)
