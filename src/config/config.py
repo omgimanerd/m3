@@ -104,7 +104,7 @@ class Config:
             f.write(self.json())
 
     def resolve_asset_paths(self) -> dict[str, Path]:
-        """Resolves and returns relative paths for assets defined in config file."""
+        """Resolves the relative paths for assets defined in config file."""
         asset_paths = get_field_names(ProjectPaths)
         resolved_asset_paths = {}
         for asset_path in asset_paths:
