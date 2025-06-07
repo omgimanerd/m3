@@ -123,7 +123,8 @@ class MultiKeyDict:
         return self.keys_to_multikeys.keys()
 
     @staticmethod
-    def merge(multikey_dict1: Self, multikey_dict2: Self) -> Self:
+    def merge_dicts(
+            multikey_dict1: Self, multikey_dict2: Self) -> Self:
         """Given two multikey dicts, merge the smaller dict into the larger one.
 
         Args:
@@ -131,7 +132,7 @@ class MultiKeyDict:
             multikey_dict2: The second multikey dict to merge
 
         Returns:
-            A multikey dict containing entries from both the first and second 
+            A multikey dict containing entries from both the first and second
             multikey dicts.
         """
         if multikey_dict1.num_of_keys != multikey_dict2.num_of_keys:
