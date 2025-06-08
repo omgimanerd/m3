@@ -1,23 +1,35 @@
 #!/bin/bash
 
+# Must be executed in root
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   echo "Usage: . ./setup"
-  exit 1
+  return 1
 fi
 
+# Activate environment
 curr_dir="$(dirname "$BASH_SOURCE[0]")"
 cd -- $curr_dir && \
 source venv/bin/activate
+
+# Install pre-commit if not installed
+pip show pre_commit > /dev/null
+if [[ $? != 0 ]]; then
+  pip install pre-commit
+fi
+
+# Attached project root to PYTHONPATH
 if [[ ! $PYTHONPATH =~ "$(pwd)" ]]; then
   export PYTHONPATH="$PYTHONPATH:$(pwd):"
 fi
 echo "PYTHONPATH=$PYTHONPATH"
 
-if [[ ! -d "{$curr_dir}/.git/hooks" ]]; then
+# Check if git hooks exist
+if [[ ! -d "${curr_dir}/.git/hooks" ]]; then
   echo ".git/hooks directory not found"
-  exit 1
+  return 1
 fi
 
-if [[ ! -f "{$git_path}/pre-commit" ]]; then
+# Install git hooks
+if [[ ! -f "${git_path}/pre-commit" ]]; then
   pre-commit install
 fi
