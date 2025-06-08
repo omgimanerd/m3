@@ -62,7 +62,7 @@ class Lockfile:
         """Writes the state of this lockfile object to the file.
 
         Args:
-            path: An optional path argument to write the lockfile to, otherwise 
+            path: An optional path argument to write the lockfile to, otherwise
             writes to the default _path member stored in the lockfile.
         """
         with open(path if path is not None else self._path, "w",
@@ -114,18 +114,30 @@ class Lockfile:
                 'Failed to reindex lockfile entries:' + f'{error}') from error
         return reindexed_dicts
 
-    def filter_by_asset_type(self, asset_type: AssetType):
-        """Returns a dict containing all entries of a given asset type.
+    def filter_by_asset_type(self, asset_type: AssetType) -> MultiKeyDict:
+        """Returns a multikey dict containing all entries of a given asset type.
 
         Args:
             asset_type: The asset type to filter entries by
 
         Returns:
-            A dict keyed by the asset name, containing all entries of the given
-            asset type.
+            A multikey dict keyed by the asset name and hashes, containing all
+            entries of the given asset type.
         """
-        return {name: entry for name, entry in self.entries.items()
-                if entry.asset_type == asset_type}
+        multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
+        for entry in self.entries.values():
+            if entry.asset_type == asset_type:
+                keys = [entry.name]
+                for alg in sorted(HASH_ALGS, key=lambda member: member.value):
+                    try:
+                        keys.append(entry.hash[alg])
+                    except AttributeError as error:
+                        raise AttributeError(
+                            f'Expected to find hashing alg {alg}' +
+                            ' as attribute of HashEntry, not found') from error
+                multikey = tuple(keys)
+                multikey_dict.add(multikey, entry)
+        return multikey_dict
 
     def create_multikey_dict_for_lockfile(self):
         """Creates a multikey dict containing the lockfile entries, where the
