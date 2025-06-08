@@ -9,18 +9,11 @@ and modpack export.
 -   Ceiran
 
 # Usage
-
-Usage: m3.py [OPTIONS] COMMAND [ARGS]...
-
-Options:
--h, --help Show this message and exit.
-
-Commands:
 ```
 Usage: m3.py [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  -h, --help  Show this message and exit.
+-h, --help Show this message and exit.
 
 Commands:
   add     Installs assets into the project.
