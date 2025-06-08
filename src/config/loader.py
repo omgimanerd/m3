@@ -14,6 +14,6 @@ def load_config_and_lockfile() -> tuple[Optional[Config], Optional[Lockfile]]:
     """
     config = Config.get_config()
     if config is None:
-        return tuple(None, None)
-    lockfile = Lockfile.create(config.get_path().parent)
-    return tuple(config, lockfile)
+        return (None, None)
+    lockfile = Lockfile.create(config.get_parent_dir())
+    return (config, lockfile)
