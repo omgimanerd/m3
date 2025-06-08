@@ -32,7 +32,7 @@ class MultiKeyDict:
         False otherwise."""
         if not isinstance(value, MultiKeyDict):
             return False
-        if self.len() != value.len():
+        if len(self) != len(value):
             return False
         if self.num_of_keys != value.num_of_keys:
             return False
@@ -109,14 +109,18 @@ class MultiKeyDict:
         """
         return self.data.get(self.keys_to_multikeys.get(key, None), None)
 
-    def len(self) -> int:
+    def __len__(self):
         """Returns the number of data entries."""
         return len(self.data)
 
     def get_multikeys(self):
         """Returns all multikeys in the dict."""
-        return self.keys_to_multikeys.values()
+        return self.data.keys()
 
     def get_keys(self):
         """Returns all individual keys."""
         return self.keys_to_multikeys.keys()
+
+    def get_values(self):
+        """Returns all values in the multikey dict."""
+        return self.data.values()
