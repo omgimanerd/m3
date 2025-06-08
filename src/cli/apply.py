@@ -2,9 +2,10 @@
 
 import click
 
-from src.config.config import Config
-from src.config.lockfile import HASH_ALGS, Lockfile
+from src.config.loader import load_config_and_lockfile
+from src.config.lockfile import HASH_ALGS
 from src.util.asset_management import install_assets, uninstall_assets
+from src.util.enum import AssetType
 from src.util.hash import hash_asset_dir_multi_hash
 
 R_HELPTEXT = """
@@ -21,24 +22,26 @@ class Apply:
     @staticmethod
     def apply(remove):
         """Applies the lockfile's state to the project assets."""
-        config = Config.get_config()
-        lockfile = Lockfile.create(config.get_path())
-        print(config)
-        print(lockfile)
-        lockfile_multikey_dict = lockfile.create_multikey_dict_for_lockfile()
+        config, lockfile = load_config_and_lockfile()
+
+        if config is None or lockfile is None:
+            raise click.ClickException('Not an m3 project')
+
         resolved_asset_paths = config.resolve_asset_paths()
 
-        for path in resolved_asset_paths.values():
+        for asset_type, path in resolved_asset_paths.items():
+            sorted_lockfile_multikey_dict = lockfile.filter_by_asset_type(
+                asset_type)
             asset_multikey_dict = hash_asset_dir_multi_hash(path, HASH_ALGS)
-            lockfile_assets = set(lockfile_multikey_dict.get_multikeys())
+            lockfile_assets = set(sorted_lockfile_multikey_dict.get_multikeys())
             curr_assets = set(asset_multikey_dict.get_multikeys())
             install_queue = lockfile_assets.difference(curr_assets)
-            install_assets(lockfile_assets, install_queue, path)
+            install_assets(sorted_lockfile_multikey_dict, install_queue,
+                           path, click.echo)
 
             if remove:
                 uninstall_queue = curr_assets.difference(lockfile_assets)
-                uninstall_assets(curr_assets, uninstall_queue)
+                uninstall_assets(asset_multikey_dict,
+                                 uninstall_queue, click.echo)
 
-        if remove:
-            click.echo('Pruned extraneous assets not found in lockfile')
         click.echo('Applied lockfile state to development directory')
