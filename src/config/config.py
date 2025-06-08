@@ -10,7 +10,7 @@ from click import ClickException
 from pydantic.dataclasses import dataclass
 
 from src.lib.dataclasses import PathField, dataclass_json, get_field_names
-from src.util.enum import Platform
+from src.util.enum import AssetType, Platform
 from src.util.paths import resolve_relative_path, walk_up_search
 
 CONFIG_FILENAME = "m3.json"
@@ -25,6 +25,15 @@ class ProjectPaths:
     resourcepacks: Path = PathField("resourcepacks")
     texturepacks: Path = PathField("texturepacks")
     shaderpacks: Path = PathField("shaderpacks")
+
+    def get(self):
+        """Map ProjectPaths fields to AssetType."""
+        a = {}
+        a[AssetType.MOD] = self.mods
+        a[AssetType.RESOURCE_PACK] = self.resourcepacks
+        a[AssetType.TEXTURE_PACK] = self.texturepacks
+        a[AssetType.SHADER_PACK] = self.shaderpacks
+        return a
 
 
 @dataclass_json
@@ -90,6 +99,10 @@ class Config:
         """Returns the path of the config file."""
         return self._path
 
+    def get_parent_dir(self) -> Path:
+        """Returns parent dir of the config file."""
+        return self._path.parent
+
     def write(self, path: Optional[Union[Path, str]] = None):
         """Writes the state of this config object to disk.
 
@@ -103,15 +116,14 @@ class Config:
             # pylint: disable-next=no-member
             f.write(self.json())
 
-    def resolve_asset_paths(self) -> dict[str, Path]:
+    def resolve_asset_paths(self) -> dict[AssetType, Path]:
         """Resolves the relative paths for assets defined in config file."""
-        asset_paths = get_field_names(ProjectPaths)
         resolved_asset_paths = {}
-        for asset_path in asset_paths:
+        for type_, path_ in self.paths.get().items():
             try:
                 resolved_path = resolve_relative_path(
-                    self._path, getattr(self.paths, asset_path))
-                resolved_asset_paths[asset_path] = resolved_path
+                    self.get_parent_dir(), path_)
+                resolved_asset_paths[type_] = resolved_path
             except Exception as error:
                 raise error
         return resolved_asset_paths
