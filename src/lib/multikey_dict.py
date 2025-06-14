@@ -125,35 +125,3 @@ class MultiKeyDict:
     def get_values(self):
         """Returns all values in the multikey dict."""
         return self.data.values()
-
-    @staticmethod
-    def merge_dicts(
-            multikey_dict1: Self, multikey_dict2: Self) -> Self:
-        """Given two multikey dicts, merge the smaller dict into the larger one.
-
-        Args:
-            multikey_dict1: The first multikey dict to merge
-            multikey_dict2: The second multikey dict to merge
-
-        Returns:
-            A multikey dict containing entries from both the first and second
-            multikey dicts.
-        """
-        if multikey_dict1.num_of_keys != multikey_dict2.num_of_keys:
-            raise ValueError(
-                'MultiKeyDicts must have same number of keys to merge')
-        if multikey_dict1.len() > multikey_dict2.len():
-            base_dict = multikey_dict1
-            tomerge_dict = multikey_dict2
-        else:
-            base_dict = multikey_dict2
-            tomerge_dict = multikey_dict1
-
-        for k, v in tomerge_dict.data.items():
-            if base_dict.is_existing_multikey(k):
-                raise ValueError(
-                    f'Found duplicate entry {k} when trying to merge ' +
-                    'two multikey dicts')
-            base_dict.add(k, v)
-
-        return base_dict

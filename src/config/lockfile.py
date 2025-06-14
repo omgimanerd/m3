@@ -114,7 +114,7 @@ class Lockfile:
                 'Failed to reindex lockfile entries:' + f'{error}') from error
         return reindexed_dicts
 
-    def filter_by_asset_type(self, asset_type: AssetType) -> MultiKeyDict:
+    def get_assets_by_type(self, asset_type: AssetType) -> MultiKeyDict:
         """Returns a multikey dict containing all entries of a given asset type.
 
         Args:

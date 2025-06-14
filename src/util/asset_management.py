@@ -23,7 +23,7 @@ def install_assets(
 
 
 def uninstall_assets(
-        asset_entries: MultiKeyDict, uninstall_queue: set, echo: Callable):
+        asset_entries: MultiKeyDict, uninstall_queue: set, echo: Callable = print):
     """Given a list of assets to uninstall, removes the assets from the asset
     path."""
     for queued_asset in uninstall_queue:
