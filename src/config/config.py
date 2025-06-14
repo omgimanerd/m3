@@ -116,8 +116,8 @@ class Config:
             # pylint: disable-next=no-member
             f.write(self.json())
 
-    def resolve_asset_paths(self) -> dict[AssetType, Path]:
-        """Resolves the relative paths for assets defined in config file."""
+    def get_asset_paths(self) -> dict[AssetType, Path]:
+        """Gets the absolute paths for assets defined in config file."""
         resolved_asset_paths = {}
         for type_, path_ in self.paths.get().items():
             try:

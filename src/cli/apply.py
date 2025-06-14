@@ -27,21 +27,20 @@ class Apply:
         if config is None or lockfile is None:
             raise click.ClickException('Not an m3 project')
 
-        resolved_asset_paths = config.resolve_asset_paths()
-
-        for asset_type, path in resolved_asset_paths.items():
-            sorted_lockfile_multikey_dict = lockfile.filter_by_asset_type(
+        for asset_type, path in config.get_asset_paths():
+            lockfile_assets_multikey_dict = lockfile.filter_by_asset_type(
                 asset_type)
-            asset_multikey_dict = hash_asset_dir_multi_hash(path, HASH_ALGS)
-            lockfile_assets = set(sorted_lockfile_multikey_dict.get_multikeys())
-            curr_assets = set(asset_multikey_dict.get_multikeys())
+            curr_asset_multikey_dict = hash_asset_dir_multi_hash(
+                path, HASH_ALGS)
+            lockfile_assets = set(lockfile_assets_multikey_dict.get_multikeys())
+            curr_assets = set(curr_asset_multikey_dict.get_multikeys())
             install_queue = lockfile_assets.difference(curr_assets)
-            install_assets(sorted_lockfile_multikey_dict, install_queue,
+            install_assets(lockfile_assets_multikey_dict, install_queue,
                            path, click.echo)
 
             if remove:
                 uninstall_queue = curr_assets.difference(lockfile_assets)
-                uninstall_assets(asset_multikey_dict,
+                uninstall_assets(curr_asset_multikey_dict,
                                  uninstall_queue, click.echo)
 
         click.echo('Applied lockfile state to development directory')
