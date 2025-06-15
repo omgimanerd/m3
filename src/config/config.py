@@ -28,12 +28,12 @@ class ProjectPaths:
 
     def get(self):
         """Map ProjectPaths fields to AssetType."""
-        a = {}
-        a[AssetType.MOD] = self.mods
-        a[AssetType.RESOURCE_PACK] = self.resourcepacks
-        a[AssetType.TEXTURE_PACK] = self.texturepacks
-        a[AssetType.SHADER_PACK] = self.shaderpacks
-        return a
+        map = {}
+        map[AssetType.MOD] = self.mods
+        map[AssetType.RESOURCE_PACK] = self.resourcepacks
+        map[AssetType.TEXTURE_PACK] = self.texturepacks
+        map[AssetType.SHADER_PACK] = self.shaderpacks
+        return map
 
 
 @dataclass_json
