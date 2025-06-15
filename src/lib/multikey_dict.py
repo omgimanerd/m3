@@ -125,3 +125,10 @@ class MultiKeyDict:
     def get_values(self):
         """Returns all values in the multikey dict."""
         return self.data.values()
+
+    def get_difference(self, multikey_dict: Self):
+        """Returns the set difference of self's multikeys and the given multikey dict's multikeys.
+        """
+        base_dict_set = set(self.get_multikeys())
+        comparison_dict_set = set(multikey_dict.get_multikeys())
+        return base_dict_set.difference(comparison_dict_set)
