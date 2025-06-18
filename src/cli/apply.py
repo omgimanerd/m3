@@ -5,7 +5,6 @@ import click
 from src.config.loader import load_config_and_lockfile
 from src.config.lockfile import HASH_ALGS
 from src.util.asset_management import install_assets, uninstall_assets
-from src.util.enum import AssetType
 from src.util.hash import hash_asset_dir_multi_hash
 
 R_HELPTEXT = """
@@ -28,18 +27,18 @@ class Apply:
             raise click.ClickException('Not an m3 project')
 
         for asset_type, path in config.get_asset_paths():
-            lockfile_assets_multikey_dict = lockfile.filter_by_asset_type(
+            lockfile_assets_multikey_dict = lockfile.get_assets_by_type(
                 asset_type)
             curr_asset_multikey_dict = hash_asset_dir_multi_hash(
                 path, HASH_ALGS)
             install_assets(lockfile_assets_multikey_dict,
-                           lockfile_assets_multikey_dict.get_difference(
+                           lockfile_assets_multikey_dict.get_multikey_difference(
                                curr_asset_multikey_dict),
                            path, click.echo)
 
             if remove:
                 uninstall_assets(curr_asset_multikey_dict,
-                                 curr_asset_multikey_dict.get_difference(
+                                 curr_asset_multikey_dict.get_multikey_difference(
                                      lockfile_assets_multikey_dict),
                                  click.echo)
 
