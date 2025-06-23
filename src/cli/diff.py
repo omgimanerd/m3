@@ -5,6 +5,7 @@ import click
 from src.config.loader import load_config_and_lockfile
 from src.config.lockfile import HASH_ALGS
 from src.util.click import command_with_aliases
+from src.util.formatter import CustomOutputFormatter
 from src.util.hash import hash_asset_dir_multi_hash
 
 
@@ -41,11 +42,20 @@ class Diff:
                     curr_asset_multikey_dict.get_by_multikey(asset_key))
 
         # Display the diff correctly formatted
-        click.echo("=========Asset Diff=========")
-        click.echo("ASSETS MISSING FROM LOCKFILE:")
+        formatter = CustomOutputFormatter()
+        click.echo(formatter.format(
+            '{diff_title:title}', diff_title='Asset Diff'))
+        click.echo(
+            formatter.format(
+                '{missing:header}', missing='Lockfile assets missing'))
         for asset in missing_assets:
-            click.echo(f'- {asset}')
-        click.echo("============================")
-        click.echo("NEW ASSETS FOUND:")
+            click.echo(
+                formatter.format(
+                    '{missing_asset:diff_minus}', diff_minus=asset))
+        click.echo(formatter.format('{separator:separator}', separator=''))
+        click.echo(
+            formatter.format(
+                '{new_assets:header}', new_assets='New assets found'))
         for asset in new_assets:
-            click.echo(f'+ {asset}')
+            click.echo(formatter.format(
+                '{new_asset:diff_plus}', new_asset=asset))
