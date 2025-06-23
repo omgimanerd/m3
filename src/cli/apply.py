@@ -26,7 +26,7 @@ class Apply:
         if config is None or lockfile is None:
             raise click.ClickException('Not an m3 project')
 
-        for asset_type, path in config.get_asset_paths():
+        for asset_type, path in config.get_asset_paths().items():
             lockfile_assets_multikey_dict = lockfile.get_assets_by_type(
                 asset_type)
             curr_asset_multikey_dict = hash_asset_dir_multi_hash(
