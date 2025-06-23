@@ -6,6 +6,7 @@ import click
 from src.cli.add import Add
 from src.cli.apply import Apply
 from src.cli.auth import Auth
+from src.cli.diff import Diff
 from src.cli.export import Export
 from src.cli.freeze import Freeze
 from src.cli.init import Init
@@ -30,6 +31,7 @@ m3.add_command(Remove.remove)
 m3.add_command(Status.status)
 m3.add_command(List.list)
 m3.add_command(Apply.apply)
+m3.add_command(Diff.diff)
 
 m3.add_command(Freeze.freeze)
 m3.add_command(Prune.prune)
