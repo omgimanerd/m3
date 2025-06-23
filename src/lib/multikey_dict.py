@@ -1,7 +1,7 @@
 """Class for multikey dicts."""
 
 from collections.abc import Hashable
-from typing import Self
+from typing import Self, Tuple
 
 
 class MultiKeyDict:
@@ -40,13 +40,6 @@ class MultiKeyDict:
         if self.keys_to_multikeys != value.keys_to_multikeys:
             return False
         return True
-
-    def __getitem__(self, key: Hashable):
-        """Get data associated with key if it exists, else try treating arg as
-        an attribute."""
-        if key in self.keys_to_multikeys:
-            return self.get(key)
-        return super().__getattribute__(key)
 
     def _validate_multikey(self, multikey: tuple):
         """Validates that a given multikey contains the right number of keys.
@@ -109,6 +102,17 @@ class MultiKeyDict:
             The data associated with the given key or None.
         """
         return self.data.get(self.keys_to_multikeys.get(key, None), None)
+
+    def get_by_multikey(self, key: Tuple) -> any:
+        """Given a valid multikey, gets the associated data.
+
+        Args:
+            key: the multikey to look up the data with
+
+        Returns:
+            The data associated with the given multikey or None.
+        """
+        return self.data.get(key, None)
 
     def __len__(self):
         """Returns the number of data entries."""
