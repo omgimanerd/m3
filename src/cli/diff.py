@@ -10,8 +10,7 @@ from src.util.hash import hash_asset_dir_multi_hash
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
 class Diff:
-    @command_with_aliases(no_args_is_help=False,
-                          short_help='Shows the lockfile and current asset diff.')
+    @command_with_aliases(short_help='Shows the lockfile and current asset diff.')
     @staticmethod
     def diff():
         """Shows the diff between the lockfile's state and the project assets."""
