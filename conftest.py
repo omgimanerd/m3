@@ -31,7 +31,7 @@ def read_file() -> Callable[[Path], str]:
 
 
 @pytest.fixture
-def read_json_file() -> Callable[[Path], str]:
+def read_json_file() -> Callable[[Path], dict]:
     """Test fixture that returns a function to read the contents of a JSON
     file and return a JSON object."""
     def _read_json_file(path):
@@ -41,7 +41,7 @@ def read_json_file() -> Callable[[Path], str]:
 
 
 @pytest.fixture
-def copy_test_data_directory(tmp_path) -> Callable[[Path], str]:
+def copy_test_data_directory(tmp_path) -> Callable[[Path], Path]:
     """Test fixture that returns a function to recursively copy the contents of 
     a given source path and return the path to the copied directory."""
     def _copy_test_data_directory(path: Path):
