@@ -51,7 +51,7 @@ class Diff:
         for asset in missing_assets:
             click.echo(
                 formatter.format(
-                    '{missing_asset:diff_minus}', diff_minus=asset))
+                    '{missing_asset:diff_minus}', missing_asset=asset))
         click.echo(formatter.format('{separator:separator}', separator=''))
         click.echo(
             formatter.format(
