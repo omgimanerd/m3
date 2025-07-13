@@ -44,6 +44,6 @@ def read_json_file() -> Callable[[Path], dict]:
 def copy_test_data_directory(tmp_path) -> Callable[[Path], Path]:
     """Test fixture that returns a function to recursively copy the contents of 
     a given source path and return the path to the copied directory."""
-    def _copy_test_data_directory(path: Path):
-        return shutil.copytree(path, tmp_path, dirs_exist_ok=True)
+    def _copy_test_data_directory(path: Path, dest_path: Path = tmp_path):
+        return shutil.copytree(path, dest_path, dirs_exist_ok=True)
     return _copy_test_data_directory
