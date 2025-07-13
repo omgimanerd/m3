@@ -20,7 +20,7 @@ def test_apply(mock_download_file,
     runner = CliRunner(echo_stdin=True)
 
     with runner.isolated_filesystem(temp_dir=tmp_path) as td:
-        _ = copy_test_data_directory(ref_path, td)
+        copy_test_data_directory(ref_path, td)
         result = runner.invoke(Apply.apply)
     mock_download_file.assert_called_once()
     assert "Installed c.zip" in result.output
@@ -38,7 +38,7 @@ def test_apply_with_remove(
     runner = CliRunner(echo_stdin=True)
 
     with runner.isolated_filesystem(temp_dir=tmp_path) as td:
-        _ = copy_test_data_directory(ref_path, td)
+        copy_test_data_directory(ref_path, td)
         result = runner.invoke(Apply.apply, ['-r'])
     mock_download_file.assert_called_once()
     assert not os.path.exists(tmp_path / '/assets/mods/b.jar')
