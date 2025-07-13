@@ -17,7 +17,7 @@ def test_apply(mock_download_file,
     assets."""
     ref_path = current_dir / 'testdata/'
     mock_download_file.return_value = Mock()
-    runner = CliRunner(echo_stdin=True)
+    runner = CliRunner()
 
     with runner.isolated_filesystem(temp_dir=tmp_path) as td:
         copy_test_data_directory(ref_path, td)
