@@ -1,5 +1,7 @@
 """diff subcommand module"""
 
+from typing import List
+
 import click
 
 from src.config.loader import load_config_and_lockfile
@@ -7,6 +9,43 @@ from src.config.lockfile import HASH_ALGS
 from src.util.click import command_with_aliases
 from src.util.formatter import CustomOutputFormatter
 from src.util.hash import hash_asset_dir_multi_hash
+
+
+# pylint: disable-next=too-few-public-methods
+class DiffOutputBuilder:
+    """Builds the output for the diff command in a predefined format to
+    display."""
+
+    def build_diff_output(
+            self, missing_assets: List[str],
+            new_assets: List[str]) -> str:
+        """Given a list of missing assets and a list of new assets, builds the
+        output for the diff command.
+
+        Args:
+            missing_assets: The list of missing assets to display
+            new_assets: The list of new assets to display
+
+        Returns:
+            The output of the diff command as a single string.
+        """
+        # Display the diff correctly formatted
+        formatter = CustomOutputFormatter()
+        output = ''
+        output += formatter.format(
+            '{diff_title:title}', diff_title='Asset Diff')
+        output += '\n' + formatter.format(
+            '{missing:header}', missing='Lockfile assets missing')
+        for asset in missing_assets:
+            output += '\n' + formatter.format(
+                '{missing_asset:diff_minus}', missing_asset=asset)
+        output += '\n' + formatter.format('{separator:separator}', separator='')
+        output += '\n' + formatter.format(
+            '{new_assets:header}', new_assets='New assets found')
+        for asset in new_assets:
+            output += '\n' + formatter.format(
+                '{new_asset:diff_plus}', new_asset=asset)
+        return output
 
 
 # pylint: disable-next=too-few-public-methods, missing-class-docstring
@@ -42,20 +81,6 @@ class Diff:
                     curr_asset_multikey_dict.get_by_multikey(asset_key))
 
         # Display the diff correctly formatted
-        formatter = CustomOutputFormatter()
-        click.echo(formatter.format(
-            '{diff_title:title}', diff_title='Asset Diff'))
-        click.echo(
-            formatter.format(
-                '{missing:header}', missing='Lockfile assets missing'))
-        for asset in missing_assets:
-            click.echo(
-                formatter.format(
-                    '{missing_asset:diff_minus}', missing_asset=asset))
-        click.echo(formatter.format('{separator:separator}', separator=''))
-        click.echo(
-            formatter.format(
-                '{new_assets:header}', new_assets='New assets found'))
-        for asset in new_assets:
-            click.echo(formatter.format(
-                '{new_asset:diff_plus}', new_asset=asset))
+        output_builder = DiffOutputBuilder()
+        output = output_builder.build_diff_output(missing_assets, new_assets)
+        click.echo(output)
