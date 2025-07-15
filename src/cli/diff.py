@@ -14,6 +14,8 @@ from src.util.hash import hash_asset_dir_multi_hash
 
 def evaluate_diff(
         config: Config, lockfile: Lockfile) -> Tuple[List[str], List[str]]:
+    """Given the config and lockfile of an m3 project, evaluates the diff
+    between the lockfile's state and the project's assets."""
     missing_assets = []
     new_assets = []
     for asset_type, path in config.get_asset_paths().items():
