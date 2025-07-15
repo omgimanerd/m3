@@ -1,14 +1,40 @@
 """diff subcommand module"""
 
-from typing import List
+from typing import List, Tuple
 
 import click
 
+from src.config.config import Config
 from src.config.loader import load_config_and_lockfile
-from src.config.lockfile import HASH_ALGS
+from src.config.lockfile import HASH_ALGS, Lockfile
 from src.util.click import command_with_aliases
 from src.util.formatter import CustomOutputFormatter
 from src.util.hash import hash_asset_dir_multi_hash
+
+
+def evaluate_diff(
+        config: Config, lockfile: Lockfile) -> Tuple[List[str], List[str]]:
+    missing_assets = []
+    new_assets = []
+    for asset_type, path in config.get_asset_paths().items():
+        lockfile_assets_multikey_dict = lockfile.get_assets_by_type(
+            asset_type)
+        curr_asset_multikey_dict = hash_asset_dir_multi_hash(
+            path, HASH_ALGS)
+
+        missing_asset_set = lockfile_assets_multikey_dict.get_multikey_difference(
+            curr_asset_multikey_dict)
+        new_asset_set = curr_asset_multikey_dict.get_multikey_difference(
+            lockfile_assets_multikey_dict)
+
+        for asset_key in missing_asset_set:
+            missing_assets.append(
+                lockfile_assets_multikey_dict.get_by_multikey(asset_key).name)
+
+        for asset_key in new_asset_set:
+            new_assets.append(
+                curr_asset_multikey_dict.get_by_multikey(asset_key))
+    return missing_assets, new_assets
 
 
 # pylint: disable-next=too-few-public-methods
@@ -59,26 +85,7 @@ class Diff:
         if config is None or lockfile is None:
             raise click.ClickException('Not an m3 project')
 
-        missing_assets = []
-        new_assets = []
-        for asset_type, path in config.get_asset_paths().items():
-            lockfile_assets_multikey_dict = lockfile.get_assets_by_type(
-                asset_type)
-            curr_asset_multikey_dict = hash_asset_dir_multi_hash(
-                path, HASH_ALGS)
-
-            missing_asset_set = lockfile_assets_multikey_dict.get_multikey_difference(
-                curr_asset_multikey_dict)
-            new_asset_set = curr_asset_multikey_dict.get_multikey_difference(
-                lockfile_assets_multikey_dict)
-
-            for asset_key in missing_asset_set:
-                missing_assets.append(
-                    lockfile_assets_multikey_dict.get_by_multikey(asset_key).name)
-
-            for asset_key in new_asset_set:
-                new_assets.append(
-                    curr_asset_multikey_dict.get_by_multikey(asset_key))
+        missing_assets, new_assets = evaluate_diff(config, lockfile)
 
         # Display the diff correctly formatted
         output_builder = DiffOutputBuilder()
