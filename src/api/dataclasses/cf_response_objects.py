@@ -1,7 +1,7 @@
 """Dataclasses for the CurseForge API to process response data."""
 
 
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic.dataclasses import dataclass
 
@@ -19,7 +19,7 @@ class CFFile:
     fileName: str
     releaseType: int  # FileReleaseType is an enum
     fileStatus: int  # FileStatus is an enum
-    hashes: dict
+    hashes: list[dict]
     fileDate: str
     fileLength: int
     downloadCount: int
@@ -54,6 +54,7 @@ class CFMod:
     status: int
     downloadCount: int
     primaryCategoryId: int
+    categories: list[dict]
     classId: int
     authors: list[dict]
     mainFileId: int
@@ -78,6 +79,16 @@ class CFGetModResponse:
 
 
 @dataclass
+class CFGetFilesResponse:
+    """Format for CurseForge "Get Files response.
+
+    See documentation for endpoint here:
+    https://docs.curseforge.com/rest-api/?python#get-files
+    """
+    data: list[CFFile]
+
+
+@dataclass
 class CFDataResponse:
     """Data object for CurseForge API calls.
 
@@ -87,6 +98,6 @@ class CFDataResponse:
     corresponding to response.reason or an explanation of a non-HTTP error that
     occurred.
     """
-    payload: CFGetModResponse
+    payload: Union[CFGetModResponse, CFGetFilesResponse]
     status_code: Optional[int]
     status: Optional[str]

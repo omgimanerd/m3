@@ -8,7 +8,9 @@ from urllib.parse import urljoin
 import requests
 from click import ClickException
 
-from src.api.dataclasses.cf_response_objects import CFGetModResponse, CFMod
+from src.api.dataclasses.cf_response_objects import (CFFile,
+                                                     CFGetFilesResponse,
+                                                     CFGetModResponse, CFMod)
 
 CF_BASE_URL = 'https://api.curseforge.com'
 CF_API_VERSION = 'v1'
@@ -62,8 +64,9 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             An object containing CFGetModResponse object or None, statusCode of
             API request, and status containing status or error message.
         """
-        return self._unpack_request(f'mods/{mod_id}',
-                                    unpacker=lambda json: CFGetModResponse(**json))
+        return self._unpack_request(f'mods/{mod_id} ',
+                                    unpacker=lambda
+                                    json: CFGetModResponse(**json))
 
     def get_mods(self, mod_ids: list[int]) -> list[CFMod]:
         """Return list of CFGetModData object containing mod metadata.
@@ -81,3 +84,20 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
                 "filterPcOnly": True
             },
             unpacker=lambda json: [CFGetModResponse(**o) for o in json])
+
+    def get_asset_files(self, file_ids: list[int]) -> list[CFFile]:
+        """Return list of CFFile objects containing file metadata.
+
+        Args:
+            file_ids: List of file IDs to query
+
+        Returns:
+            A list of CFFile objects.
+        """
+        return self._unpack_request(
+            'mods/files',
+            body={
+                "fileIds": file_ids,
+                "filterPcOnly": True
+            },
+            unpacker=lambda json: [CFGetFilesResponse(**o) for o in json])
