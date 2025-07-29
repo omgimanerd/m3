@@ -1,11 +1,16 @@
 """Classes for defining assets managed by m3."""
 
 
-from typing import Self, Union
+from typing import Union
 
+from packaging.version import Version
 from pydantic.dataclasses import dataclass
 
+from src.api.dataclasses.cf_response_objects import CFFile, CFMod
 from src.lib.dataclasses import dataclass_json
+from src.util.asset_analysis import (is_older_than_version,
+                                     keyword_in_category_url,
+                                     keyword_in_modules)
 from src.util.enum import AssetType, Platform, Side
 
 
@@ -51,6 +56,34 @@ class CurseForgeAsset(Asset):
 
     def get_asset_identifier(self) -> tuple[Union[str, int], Union[str, int]]:
         return (self.project_id, self.file_id)
+
+    @staticmethod
+    def identify_cf_asset_type(
+            proj_data: CFMod, asset_data: CFFile) -> AssetType:
+        """Attempts to identify the asset type for a given asset file using
+        project and asset data from the CurseForge API.
+
+        Args:
+            proj_data: The project data for this asset
+            asset_data: The data for this specific asset file
+
+        Returns:
+            The AssetType for the given asset file or raises a ValueError if 
+            unable to determine the asset type with the given data.
+        """
+        if keyword_in_category_url(proj_data.categories, "/mc-mods/"):
+            return AssetType.MOD
+        if keyword_in_category_url(proj_data.categories, "/shaders/"):
+            return AssetType.SHADER_PACK
+        if not is_older_than_version(asset_data.gameVersions, Version("1.6.1")):
+            return AssetType.RESOURCE_PACK
+        if keyword_in_modules(asset_data.modules, "pack.mcmeta"):
+            return AssetType.RESOURCE_PACK
+        if keyword_in_modules(asset_data.modules, ".png"):
+            return AssetType.TEXTURE_PACK
+        raise ValueError(
+            f'Unable to identify asset type for {asset_data.displayName}, ' +
+            'skipping...')
 
 
 @dataclass_json
