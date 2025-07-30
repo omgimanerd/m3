@@ -64,7 +64,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             An object containing CFGetModResponse object or None, statusCode of
             API request, and status containing status or error message.
         """
-        return self._unpack_request(f'mods/{mod_id} ',
+        return self._unpack_request(f'mods/{mod_id}',
                                     unpacker=lambda
                                     json: CFGetModResponse(**json))
 
