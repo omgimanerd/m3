@@ -136,25 +136,6 @@ class CurseForgeAsset(Asset):
             f'Unable to identify asset type for {asset_data.displayName}, ' +
             'skipping...')
 
-    @staticmethod
-    def response_object_to_cf_asset(resp_obj: CFFile):
-        """Constructor to convert the given CFFile response object from the
-        CurseForge API to a CurseForgeAsset object.
-
-        Args:
-            resp_obj: The CFFile object to convert
-
-        Returns:
-            A CurseForgeAsset object
-        """
-        # pylint: disable-next=no-value-for-parameter
-        return CurseForgeAsset(name=resp_obj.displayName,
-                               asset_type=AssetType.MOD, side=Side.BOTH
-                               if resp_obj.isServerPack else Side.CLIENT,
-                               cdn_link=resp_obj.downloadUrl,
-                               dependencies=resp_obj.dependencies,
-                               project_id=resp_obj.modId, file_id=resp_obj.id)
-
 
 @dataclass_json
 @dataclass
