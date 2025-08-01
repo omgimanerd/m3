@@ -1,10 +1,11 @@
 """Class for defining m3's lockfile entries."""
 
-from typing import Union
+from typing import Optional
 
 from pydantic.dataclasses import dataclass
 
-from src.api.dataclasses.cf_response_objects import CFFile, CFMod
+from src.api.dataclasses.cf_response_objects import (CF_HASH_ALG_MAP, CFFile,
+                                                     CFMod)
 from src.lib.asset import Asset, CurseForgeAsset
 from src.lib.dataclasses import dataclass_json
 from src.util.enum import AssetType, HashAlg, Platform
@@ -14,9 +15,9 @@ from src.util.enum import AssetType, HashAlg, Platform
 @dataclass
 class HashEntry:
     """Dataclass wrapper for handling file hashes of different hash algorithms."""
-    sha1: Union[str, None]
-    sha512: Union[str, None]
-    md5: Union[str, None]
+    sha1: Optional[str]
+    sha512: Optional[str]
+    md5: Optional[str]
 
     def __getitem__(self, name: HashAlg):
         if isinstance(name, HashAlg):
@@ -25,15 +26,16 @@ class HashEntry:
             f'Expected HashAlg for HashEntry attribute, got {type(name)}')
 
     @staticmethod
-    def create_hash_entry_from_cf_resp_obj(resp_obj: CFFile):
+    def create_hash_entry_from_cf_resp_obj(resp_obj: CFFile) -> 'HashEntry':
         """Generate a hash entry using the hashes in the response object from
         the CurseForge API."""
         file_hashes = {}
-        for hash_ in resp_obj.hashes:
-            if hash_.algo == 1:
-                file_hashes['sha1'] = hash_.value
-            elif hash_.algo == 2:
-                file_hashes['md5'] = hash_.value
+        try:
+            for hash_ in resp_obj.hashes:
+                file_hashes[CF_HASH_ALG_MAP[hash_.algo]] = hash_.value
+        except KeyError as error:
+            raise Exception('Error occurred while processing data for ' +
+                            f'{resp_obj.displayName}: {error}') from error
 
         return HashEntry(**file_hashes, sha512=None)
 
@@ -51,7 +53,7 @@ class LockfileEntry:
 
     @staticmethod
     def create_lockfile_entry_from_resp_obj(
-            proj_data: CFMod, asset_data: CFFile):
+            proj_data: CFMod, asset_data: CFFile) -> 'LockfileEntry':
         """Given a response object from the CurseForge API, create a lockfile
         entry.
 

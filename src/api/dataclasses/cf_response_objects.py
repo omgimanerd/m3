@@ -5,6 +5,11 @@ from typing import Optional, Union
 
 from pydantic.dataclasses import dataclass
 
+CF_HASH_ALG_MAP = {
+    1: 'sha1',
+    2: 'md5'
+}
+
 
 @dataclass
 # pylint: disable=too-many-instance-attributes
