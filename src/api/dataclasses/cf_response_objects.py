@@ -28,20 +28,20 @@ class CFFile:
     fileDate: str
     fileLength: int
     downloadCount: int
-    fileSizeOnDisk: int
     downloadUrl: str
     gameVersions: list[str]
     sortableGameVersions: list[dict]
     dependencies: list[dict]
-    exposeAsAlternative: bool
-    parentProjectFileId: int
     alternateFileId: int
     isServerPack: bool
-    serverPackFileId: int
-    isEarlyAccessContent: bool
-    earlyAccessEndDate: str
     fileFingerprint: int
     modules: list[dict]
+    exposeAsAlternative: Optional[bool] = None
+    parentProjectFileId: Optional[int] = None
+    fileSizeOnDisk: Optional[int] = None
+    serverPackFileId: Optional[int] = None
+    isEarlyAccessContent: Optional[bool] = None
+    earlyAccessEndDate: Optional[str] = None
     # pylint: enable=invalid-name
 
 
@@ -64,12 +64,12 @@ class CFMod:
     authors: list[dict]
     mainFileId: int
     latestFiles: list[dict]
-    latestFileIndexes: list[dict]
     latestEarlyAccessFilesIndexes: list[dict]
     dateCreated: str
     dateModified: str
     allowModDistribution: bool
     isAvailable: bool
+    latestFileIndexes: Optional[list[dict]] = None
     # pylint: enable=invalid-name
 
 
@@ -79,6 +79,16 @@ class CFGetModResponse:
 
     See documentation for endpoint here:
     https://docs.curseforge.com/rest-api/?python#get-mod
+    """
+    data: CFMod
+
+
+@dataclass
+class CFGetModsResponse:
+    """Format for CurseForge "Get Mods" response.
+
+    See documentation for endpoint here:
+    https://docs.curseforge.com/rest-api/?shell#get-mod-files
     """
     data: list[CFMod]
 
@@ -103,6 +113,6 @@ class CFDataResponse:
     corresponding to response.reason or an explanation of a non-HTTP error that
     occurred.
     """
-    payload: Union[CFGetModResponse, CFGetFilesResponse]
+    payload: Union[CFGetModResponse, CFGetModsResponse, CFGetFilesResponse]
     status_code: Optional[int]
     status: Optional[str]
