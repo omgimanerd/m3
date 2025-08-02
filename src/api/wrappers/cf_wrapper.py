@@ -10,7 +10,8 @@ from click import ClickException
 
 from src.api.dataclasses.cf_response_objects import (CFFile,
                                                      CFGetFilesResponse,
-                                                     CFGetModResponse, CFMod)
+                                                     CFGetModResponse,
+                                                     CFGetModsResponse, CFMod)
 
 CF_BASE_URL = 'https://api.curseforge.com'
 CF_API_VERSION = 'v1'
@@ -29,11 +30,11 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             'x-api-key': self.api_key
         }
 
-    def _request(self, path: Path, body: dict = None) -> dict:
+    def _get_request(self, path: Path, body: dict = None) -> dict:
         try:
             url = urljoin(CF_BASE_URL, str(Path(CF_API_VERSION) / path))
             response = requests.get(
-                url, headers=self._get_headers(), body=body, timeout=10)
+                url, headers=self._get_headers(), json=body, timeout=10)
             return response.json()
         except requests.exceptions.HTTPError as e:
             raise ClickException(
@@ -45,11 +46,33 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             raise ClickException(
                 'Failed to decode JSON payload from CurseForge API') from e
 
-    def _unpack_request(self, path: str, unpacker: Callable[[object], object],
-                        body: dict = None) -> object:
+    def _post_request(self, path: Path, body: dict = None) -> dict:
         try:
-            json = self._request(Path(path), body=body)
-            return unpacker(json)
+            url = urljoin(CF_BASE_URL, str(Path(CF_API_VERSION) / path))
+            response = requests.post(
+                url, headers=self._get_headers(), json=body, timeout=10)
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            raise ClickException(
+                'A problem occurred while querying the CurseForge API') from e
+        except requests.exceptions.RequestException as e:
+            raise ClickException(
+                'A problem occurred while querying the CurseForge API') from e
+        except JSONDecodeError as e:
+            raise ClickException(
+                'Failed to decode JSON payload from CurseForge API') from e
+
+    def _unpack_request(
+            self, path: str, method: str, unpacker: Callable[[object],
+                                                             object],
+            body: dict = None) -> object:
+        try:
+            if method == 'GET':
+                json = self._get_request(Path(path), body=body)
+                return unpacker(json)
+            if method == 'POST':
+                json = self._post_request(Path(path), body=body)
+                return unpacker(json)
         except TypeError as e:
             raise Exception(
                 f'Failed to process API response to {path}') from e
@@ -64,9 +87,9 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             An object containing CFGetModResponse object or None, statusCode of
             API request, and status containing status or error message.
         """
-        return self._unpack_request(f'mods/{mod_id}',
-                                    unpacker=lambda
-                                    json: CFGetModResponse(**json))
+        return self._unpack_request(
+            f'mods/{mod_id} ', 'GET',
+            unpacker=lambda json: CFGetModResponse(**json))
 
     def get_mods(self, mod_ids: list[int]) -> list[CFMod]:
         """Return list of CFGetModData object containing mod metadata.
@@ -78,12 +101,12 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             List of CFGetModResponse objects.
         """
         return self._unpack_request(
-            'mods',
+            'mods', 'POST',
             body={
                 "modIds": mod_ids,
                 "filterPcOnly": True
             },
-            unpacker=lambda json: [CFGetModResponse(**o) for o in json])
+            unpacker=lambda json: CFGetModsResponse(**json))
 
     def get_asset_files(self, file_ids: list[int]) -> list[CFFile]:
         """Return list of CFFile objects containing file metadata.
@@ -95,9 +118,8 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             A list of CFFile objects.
         """
         return self._unpack_request(
-            'mods/files',
+            'mods/files', 'POST',
             body={
                 "fileIds": file_ids,
-                "filterPcOnly": True
             },
-            unpacker=lambda json: [CFGetFilesResponse(**o) for o in json])
+            unpacker=lambda json: CFGetFilesResponse(**json))
