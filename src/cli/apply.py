@@ -4,7 +4,8 @@ import click
 
 from src.config.loader import load_config_and_lockfile
 from src.config.lockfile import HASH_ALGS
-from src.util.asset_management import install_assets, uninstall_assets
+from src.util.asset_management import (create_entry_queue, install_assets,
+                                       uninstall_assets)
 from src.util.hash import hash_asset_dir_multi_hash
 
 R_HELPTEXT = """
@@ -31,15 +32,16 @@ class Apply:
                 asset_type)
             curr_asset_multikey_dict = hash_asset_dir_multi_hash(
                 path, HASH_ALGS)
-            install_assets(lockfile_assets_multikey_dict,
-                           lockfile_assets_multikey_dict.get_multikey_difference(
-                               curr_asset_multikey_dict),
-                           path, click.echo)
+            install_queue = create_entry_queue(
+                lockfile_assets_multikey_dict, lockfile_assets_multikey_dict.
+                get_multikey_difference(curr_asset_multikey_dict))
+
+            install_assets(install_queue, path, click.echo)
 
             if remove:
-                uninstall_assets(curr_asset_multikey_dict,
-                                 curr_asset_multikey_dict.get_multikey_difference(
-                                     lockfile_assets_multikey_dict),
-                                 click.echo)
+                uninstall_queue = create_entry_queue(
+                    curr_asset_multikey_dict, curr_asset_multikey_dict.
+                    get_multikey_difference(lockfile_assets_multikey_dict))
+                uninstall_assets(uninstall_queue, path, click.echo)
 
         click.echo('Applied lockfile state to development directory')
