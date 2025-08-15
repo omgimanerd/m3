@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Union
 
 from src.config.lockfile_entry import LockfileEntry
 from src.lib.multikey_dict import MultiKeyDict
@@ -20,19 +20,20 @@ def create_entry_queue(
 
 
 def install_asset(
-        lockfile_entry: LockfileEntry, asset_path: Path, echo: Callable):
+        lockfile_entry: LockfileEntry, asset_path: Path,
+        echo: Callable):
     """Installs the given asset to the asset path."""
     cdn_link = lockfile_entry.asset.cdn_link
     file_path = asset_path / lockfile_entry.name
     download_file(cdn_link, file_path)
     if not lockfile_entry.hash.check_hash(file_path):
         echo(
-            'Hash does not match, uninstalling' +
+            'Hash does not match, uninstalling ' +
             f'{lockfile_entry.display_name}...')
         uninstall_asset(lockfile_entry, asset_path, echo)
         return
-    lockfile_entry.hash.populate_hashes(file_path)
     echo(f'Installed {lockfile_entry.display_name}')
+    lockfile_entry.hash.populate_hashes(file_path)
 
 
 def install_assets(
@@ -45,12 +46,19 @@ def install_assets(
 
 
 def uninstall_asset(
-        lockfile_entry: LockfileEntry, asset_path: Path, echo: Callable):
+        lockfile_entry: Union[LockfileEntry, Path],
+        asset_path: Path, echo: Callable):
     """Uninstalls the given asset located at the given path."""
-    file_path = asset_path / lockfile_entry.name
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        echo(f'Uninstalled {lockfile_entry.display_name}')
+    if isinstance(lockfile_entry, LockfileEntry):
+        file_path = asset_path / lockfile_entry.name
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            echo(f'Uninstalled {lockfile_entry.display_name}')
+        return
+
+    if os.path.exists(lockfile_entry):
+        os.remove(lockfile_entry)
+        echo(f'Uninstalled {lockfile_entry.name}')
 
 
 def uninstall_assets(
