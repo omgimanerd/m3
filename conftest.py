@@ -1,7 +1,6 @@
 """Pytest fixtures used by all child directories."""
 
 import json
-import os
 import shutil
 from pathlib import Path
 from typing import Callable
@@ -60,7 +59,5 @@ def create_file() -> Callable[[Path], Path]:
                 f.write(str(filename))
             else:
                 f.write(contents)
-        print(f'CREATED FILE AT {filename}')
-        print(os.listdir(filename.parent))
         return filename
     return _create_file
