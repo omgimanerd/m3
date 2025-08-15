@@ -71,7 +71,8 @@ class Asset:
     """Class for handling asset data managed by m3.
 
     Attributes:
-        name: A human-readable name for the asset
+        name: The filename of the asset
+        display_name: A human-readable name for the asset
         platform: The platform the asset is for (CurseForge, Modrinth, etc.)
         asset_type: Mod, resource pack, texture pack, or shader pack etc.
         side: Client, server, or both
@@ -79,6 +80,7 @@ class Asset:
         dependencies: A list of assets this asset depends on
     """
     name: str
+    display_name: str
     platform: Platform
     asset_type: AssetType
     side: Side
@@ -137,23 +139,29 @@ class CurseForgeAsset(Asset):
             'skipping...')
 
     @staticmethod
-    def response_object_to_cf_asset(resp_obj: CFFile):
+    def response_object_to_cf_asset(proj_data: CFMod, asset_data: CFFile):
         """Constructor to convert the given CFFile response object from the
         CurseForge API to a CurseForgeAsset object.
 
         Args:
-            resp_obj: The CFFile object to convert
+            proj_data: The data for the mod
+            asset_data: The data for the asset
 
         Returns:
             A CurseForgeAsset object
         """
+        asset_type = CurseForgeAsset.identify_cf_asset_type(
+            proj_data, asset_data)
         # pylint: disable-next=no-value-for-parameter
-        return CurseForgeAsset(name=resp_obj.displayName,
-                               asset_type=AssetType.MOD, side=Side.BOTH
-                               if resp_obj.isServerPack else Side.CLIENT,
-                               cdn_link=resp_obj.downloadUrl,
-                               dependencies=resp_obj.dependencies,
-                               project_id=resp_obj.modId, file_id=resp_obj.id)
+        return CurseForgeAsset(name=asset_data.fileName,
+                               display_name=asset_data.displayName,
+                               platform=Platform.CURSEFORGE,
+                               asset_type=asset_type, side=Side.BOTH
+                               if asset_data.isServerPack else Side.CLIENT,
+                               cdn_link=asset_data.downloadUrl,
+                               dependencies=asset_data.dependencies,
+                               project_id=asset_data.modId,
+                               file_id=asset_data.id)
 
 
 @dataclass_json

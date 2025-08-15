@@ -27,6 +27,7 @@ def test_lockfile_read_write(
         entries={
             "test-entry": LockfileEntry(
                 name="test-entry",
+                display_name="test-entry",
                 hash=HashEntry(
                     sha1="sha1-hash",
                     sha512="sha512-hash",
@@ -36,6 +37,7 @@ def test_lockfile_read_write(
                 asset_type=AssetType.MOD,
                 asset=Asset(
                     name="test-mod",
+                    display_name="test-mod",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
@@ -47,6 +49,7 @@ def test_lockfile_read_write(
             ),
             "test-texture-pack": LockfileEntry(
                 name="test-texture-pack",
+                display_name="test-texture-pack",
                 hash=HashEntry(
                     sha1="sha1-hash-texture",
                     sha512="sha512-hash-texture",
@@ -56,6 +59,7 @@ def test_lockfile_read_write(
                 asset_type=AssetType.TEXTURE_PACK,
                 asset=Asset(
                     name="test-texture-pack",
+                    display_name="test-texture-pack",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.TEXTURE_PACK,
                     side=Side.BOTH,
@@ -82,6 +86,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
         entries={
             "test-entry": LockfileEntry(
                 name="test-entry",
+                display_name="test-entry",
                 hash=HashEntry(
                     sha1="sha1-hash",
                     sha512="sha512-hash",
@@ -91,6 +96,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 asset_type=AssetType.MOD,
                 asset=Asset(
                     name="test-mod",
+                    display_name="test-mod",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
@@ -102,6 +108,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
             ),
             "test-texture-pack": LockfileEntry(
                 name="test-texture-pack",
+                display_name="test-texture-pack",
                 hash=HashEntry(
                     sha1="sha1-hash-texture",
                     sha512="sha512-hash-texture",
@@ -111,6 +118,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 asset_type=AssetType.TEXTURE_PACK,
                 asset=Asset(
                     name="test-texture-pack",
+                    display_name="test-texture-pack",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.TEXTURE_PACK,
                     side=Side.BOTH,
@@ -129,6 +137,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
         "entries": {
             "test-entry": {
                 "name": "test-entry",
+                "display_name": "test-entry",
                 "hash": {
                     "sha1": "sha1-hash",
                     "sha512": "sha512-hash",
@@ -138,6 +147,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 "asset_type": "mod",
                 "asset": {
                     "name": "test-mod",
+                    "display_name": "test-mod",
                     "platform": "curseforge",
                     "asset_type": "mod",
                     "side": "both",
@@ -149,6 +159,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
             },
             "test-texture-pack": {
                 "name": "test-texture-pack",
+                "display_name": "test-texture-pack",
                 "hash": {
                     "sha1": "sha1-hash-texture",
                     "sha512": "sha512-hash-texture",
@@ -158,6 +169,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 "asset_type": "texture_pack",
                 "asset": {
                     "name": "test-texture-pack",
+                    "display_name": "test-texture-pack",
                     "platform": "curseforge",
                     "asset_type": "texture_pack",
                     "side": "both",
@@ -181,6 +193,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
     ref_dict.add(("test-entry", "md5-hash",
                   "sha1-hash", "sha512-hash",), LockfileEntry(
         name="test-entry",
+        display_name="test-entry",
         hash=HashEntry(
             sha1="sha1-hash",
             sha512="sha512-hash",
@@ -190,6 +203,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
         asset_type=AssetType.MOD,
         asset=Asset(
             name="test-mod",
+            display_name="test-mod",
             platform=Platform.CURSEFORGE,
             asset_type=AssetType.MOD,
             side=Side.BOTH,
@@ -202,6 +216,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
     ref_dict.add(("test-texture-pack", "md5-hash-texture",
                   "sha1-hash-texture", "sha512-hash-texture", ), LockfileEntry(
         name="test-texture-pack",
+        display_name="test-texture-pack",
         hash=HashEntry(
             sha1="sha1-hash-texture",
             sha512="sha512-hash-texture",
@@ -211,6 +226,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
         asset_type=AssetType.TEXTURE_PACK,
         asset=Asset(
             name="test-texture-pack",
+            display_name="test-texture-pack",
             platform=Platform.CURSEFORGE,
             asset_type=AssetType.TEXTURE_PACK,
             side=Side.BOTH,
