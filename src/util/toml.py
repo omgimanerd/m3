@@ -37,7 +37,6 @@ def read_dir_of_tomls(dir_: Path) -> list[dict]:
     try:
         toml_files = []
         for path in dir_.glob('*.toml'):
-            print(f'toml path: {path}')
             if path.is_file() and path.suffix == ".toml":
                 toml_data = read_toml_file(path)
                 toml_files.append(toml_data)

@@ -44,7 +44,7 @@ def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
 
 
 def hash_asset_dir_multi_hash(dir_: Path,
-                              algs: list[HashAlg]) -> dict[tuple, Path]:
+                              algs: list[HashAlg]) -> MultiKeyDict:
     """Returns a multikey dict containing the path to the corresponding asset
     file path.
 
