@@ -3,11 +3,13 @@
 import hashlib
 from pathlib import Path
 
+import requests
+
 from src.lib.multikey_dict import MultiKeyDict
 from src.util.enum import HashAlg
 
 
-def hash_file(filename: Path, alg: str) -> str:
+def hash_file(filename: Path, alg: HashAlg) -> str:
     """Returns the hash of the given file using the specified hashing algorithm.
 
     Args:
@@ -18,7 +20,61 @@ def hash_file(filename: Path, alg: str) -> str:
         A hash of the given file as a string.
     """
     with open(filename, 'rb') as f:
-        return hashlib.file_digest(f, alg).hexdigest()
+        return hashlib.file_digest(f, alg.value).hexdigest()
+
+
+def hash_response_content(response: requests.Response, alg: HashAlg) -> str:
+    """Returns the hash of the file contents in the given response object.
+
+    Args:
+        response: The response object holding the file contents to hash
+        alg: The hashing algorithm to use
+
+    Returns:
+        A hash of the given bytes as a string.
+    """
+    hasher = hashlib.new(alg.value)
+    for chunk in response.iter_content(chunk_size=65536):
+        if chunk:
+            hasher.update(chunk)
+        else:
+            break
+    return hasher.hexdigest()
+
+
+def hash_update_from_file(
+        filename: Path, hasher: 'hashlib._Hash') -> 'hashlib._Hash':
+    """Updates a given hash with the hash from the given file."""
+    if filename.is_file():
+        with open(filename, 'rb') as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                hasher.update(chunk)
+    return hasher
+
+
+def hash_dir(dir_: Path, alg: HashAlg) -> str:
+    """Returns a dict containing hashes of all files in a given directory.
+
+    The dict is indexed by the hashes of the files. Each file hash will be keyed
+    to a dict that contains that hash and the file name.
+
+    Args:
+        dir_: The directory to look for files to hash
+        alg: The hashing algorithm to use
+
+    Returns:
+        A dict indexed by the file hash containing the file hash and file name.
+    """
+    def _hash_dir(dir_: Path, hasher: 'hashlib._Hash') -> 'hashlib._Hash':
+        for path in sorted(dir_.iterdir(), key=lambda p: str(p).lower()):
+            hasher.update(path.name.encode())
+            if path.is_file():
+                hasher = hash_update_from_file(path, hasher)
+            elif path.is_dir():
+                hasher = _hash_dir(path, hasher)
+        return hasher
+    hasher = _hash_dir(dir_, hashlib.new(alg.value))
+    return hasher.hexdigest()
 
 
 def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
@@ -38,7 +94,7 @@ def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
     hashes = {}
     asset_files = list(dir_.glob('*.jar')) + list(dir_.glob('*.zip'))
     for file in asset_files:
-        hashes[hash_file(file, alg.value)] = file.name
+        hashes[hash_file(file, alg)] = file.name
 
     return hashes
 
@@ -65,7 +121,7 @@ def hash_asset_dir_multi_hash(dir_: Path,
     for path in asset_files:
         keys = [path.name]
         for alg in sorted(algs, key=lambda member: member.value):
-            keys.append(hash_file(path, alg.value))
+            keys.append(hash_file(path, alg))
         multikey = tuple(keys)
 
         multikey_dict.add(multikey, path)

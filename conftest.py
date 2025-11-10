@@ -2,10 +2,15 @@
 
 import json
 import shutil
+from functools import wraps
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
+from unittest.mock import patch
 
 import pytest
+
+from src.util.enum import HashAlg
+from src.util.hash import hash_dir
 
 # Fixtures defined in modules in this project.
 # pylint: disable-next=invalid-name
@@ -53,11 +58,22 @@ def copy_test_data_directory(tmp_path) -> Callable[[Path], Path]:
 def create_file() -> Callable[[Path], Path]:
     """Test fixture that returns a function to create a file at the given path
     and return the path to the created file."""
-    def _create_file(filename: Path, contents: str = ''):
+    def _create_file(filename: Path, contents: str = None):
         with open(filename, 'w', encoding='utf-8') as f:
-            if contents == '':
-                f.write(str(filename))
-            else:
-                f.write(contents)
+            f.write(str(filename)) if contents else f.write(contents)
         return filename
     return _create_file
+
+
+@pytest.fixture
+def dir_not_modified() -> Callable[[Path, str,
+                                   Optional[HashAlg]],
+                                   bool]:
+    """Test fixture that returns a function to check if a given directory has
+    been modified based on a hash computed of the initial directory state."""
+    def _dir_not_modified(
+            dir_: Path, original_dir_hash: str,
+            alg: HashAlg = HashAlg.SHA256):
+        curr_dir_hash = hash_dir(dir_, alg)
+        return curr_dir_hash == original_dir_hash
+    return _dir_not_modified

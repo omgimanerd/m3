@@ -6,6 +6,7 @@ from src.config.loader import load_config_and_lockfile
 from src.config.lockfile import HASH_ALGS
 from src.util.asset_management import (create_entry_queue, install_assets,
                                        uninstall_assets)
+from src.util.enum import AssetStatus
 from src.util.hash import hash_asset_dir_multi_hash
 
 R_HELPTEXT = """
@@ -36,7 +37,13 @@ class Apply:
                 lockfile_assets_multikey_dict, lockfile_assets_multikey_dict.
                 get_multikey_difference(curr_asset_multikey_dict))
 
-            install_assets(install_queue, path, click.echo)
+            results = install_assets(install_queue, path)
+
+            for i in results[AssetStatus.INSTALLED]:
+                click.echo(f'Installed {i}')
+
+            for ni in results[AssetStatus.ERROR_INSTALL]:
+                click.echo(ni)
 
             if remove:
                 uninstall_queue = create_entry_queue(
