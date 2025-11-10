@@ -2,12 +2,14 @@
 
 from string import Formatter
 
+from typing_extensions import override
+
 MAX_LINE_LENGTH = 80
 
 
 class CustomOutputFormatter(Formatter):
     """Formats common output components."""
-
+    @override
     def format_field(self, value, format_spec):
         padding = (MAX_LINE_LENGTH - len(str(value))) // 2
         if format_spec == 'title':
