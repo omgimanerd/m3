@@ -52,10 +52,7 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             response = requests.post(
                 url, headers=self._get_headers(), json=body, timeout=10)
             return response.json()
-        except requests.exceptions.HTTPError as e:
-            raise ClickException(
-                'A problem occurred while querying the CurseForge API') from e
-        except requests.exceptions.RequestException as e:
+        except (requests.exceptions.HTTPError, requests.exceptions.RequestException) as e:
             raise ClickException(
                 'A problem occurred while querying the CurseForge API') from e
         except JSONDecodeError as e:
