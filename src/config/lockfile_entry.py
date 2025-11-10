@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic.dataclasses import dataclass
 
@@ -48,9 +48,21 @@ class HashEntry:
         for alg, hash_ in self.__dict__.items():
             if not hash_:
                 missing_alg = HashAlg(alg)
-                setattr(self, alg, hash_file(filename, missing_alg.value))
+                setattr(self, alg, hash_file(filename, missing_alg))
 
-    def check_hash(self, filename: Path) -> bool:
+    def get_saved_hash(self) -> Union[tuple[HashAlg, str], None]:
+        """Returns the first hash found with the corresponding
+        algorithm.
+
+        Returns:
+            The HashAlg and hash if a saved hash is found, otherwise None.
+        """
+        for alg, expected_hash in self.__dict__.items():
+            if expected_hash:
+                return (HashAlg(alg), expected_hash)
+        return None
+
+    def check_hash_for_file(self, filename: Path) -> bool:
         """Checks if the given file's hash matches a hash on file.
 
             Args:
@@ -61,14 +73,10 @@ class HashEntry:
                 FileNotFoundError if the target file does not exist.
             """
         if os.path.exists(filename):
-            for alg, expected_hash in self.__dict__.items():
-                if expected_hash:
-                    common_alg = HashAlg(alg)
-                    actual_hash = hash_file(filename, common_alg.value)
-                    return actual_hash == expected_hash
-        else:
-            raise FileNotFoundError(f'Expected file {filename} not found')
-        return False
+            common_alg, expected_hash = self.get_saved_hash()
+            actual_hash = hash_file(filename, common_alg)
+            return actual_hash == expected_hash
+        raise FileNotFoundError(f'Expected file {filename} not found')
 
 
 @dataclass_json
