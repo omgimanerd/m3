@@ -4,13 +4,11 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 from click.testing import CliRunner
 
 from src.cli.apply import Apply
 
 
-@pytest.mark.only
 @patch('src.config.lockfile.LOCKFILE_FILENAME', 'test_m3.lock.json')
 @patch('src.config.config.CONFIG_FILENAME', 'test_m3.json')
 @patch('src.util.asset_management.download_file')
@@ -31,7 +29,6 @@ def test_apply(mock_download_file,
     assert "Installed c.zip" in result.output
 
 
-@pytest.mark.only
 @patch('src.config.lockfile.LOCKFILE_FILENAME', 'test_m3.lock.json')
 @patch('src.config.config.CONFIG_FILENAME', 'test_m3.json')
 @patch('src.util.asset_management.download_file')
