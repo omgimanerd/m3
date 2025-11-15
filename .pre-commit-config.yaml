@@ -19,7 +19,6 @@ repos:
             entry: bash -c '! grep -rin --include \*.py "@pytest.mark.only" $(git diff --cached --name-only)'
             language: system
             types: [python]
-            args: [-r, -i, -n]
             pass_filenames: false
             always_run: true
           - id: check-do-not-commit
