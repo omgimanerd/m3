@@ -14,3 +14,18 @@ repos:
             types: [python]
             pass_filenames: false
             always_run: true
+          - id: prevent-pytest-mark-only
+            name: Avoid committing tests with @pytest.mark.only
+            entry: bash -c '! grep -rin --include \*.py "@pytest.mark.only" $(git diff --cached --name-only)'
+            language: system
+            types: [python]
+            args: [-r, -i, -n]
+            pass_filenames: false
+            always_run: true
+          - id: check-do-not-commit
+            name: Avoid committing "DO NOT COMMIT"
+            entry: bash -c '! grep -rin --exclude=".pre-commit-config.yaml" "DO NOT COMMIT" $(git diff --cached --name-only)'
+            language: system
+            types: [file]
+            pass_filenames: false
+            always_run: true
