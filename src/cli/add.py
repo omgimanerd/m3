@@ -45,8 +45,7 @@ class Add:
                     installed = install_asset(
                         asset_lf_entry, asset_path)
                     context.lockfile.add_entry(asset_lf_entry)
-                    for i in installed:
-                        click.echo(f'Installed {i}')
+                    click.echo(f'Installed {installed}')
                 except ValueError as error:
                     raise click.ClickException(error)
                 except FileNotFoundError as error:
