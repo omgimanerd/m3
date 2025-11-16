@@ -8,8 +8,8 @@ def _delete_directory(path: Path):
     """Deletes the given directory if it exists."""
     try:
         shutil.rmtree(path)
-    except FileNotFoundError:
-        raise
+    except FileNotFoundError as e:
+        raise e
 
 
 def overwrite_dir(
@@ -37,4 +37,4 @@ def overwrite_dir(
         raise FileNotFoundError(
             f"Error: Source directory '{src}' not found") from error
     except OSError as error:
-        raise
+        raise error

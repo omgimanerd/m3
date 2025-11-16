@@ -1,6 +1,7 @@
 """Pytest fixtures used by all tests in this project."""
 
 import json
+import os
 import shutil
 from collections import OrderedDict
 from pathlib import Path
@@ -58,8 +59,9 @@ def create_file() -> Callable[[Path], Path]:
     """Test fixture that returns a function to create a file at the given path
     and return the path to the created file."""
     def _create_file(filename: Path, contents: str = None):
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(str(filename)) if contents else f.write(contents)
+        os.makedirs(filename.parent)
+        with open(filename, "w+", encoding="utf-8") as f:
+            f.write(contents if contents else str(filename))
         return filename
     return _create_file
 

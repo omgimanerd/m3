@@ -69,7 +69,8 @@ class AddTest:
 
         with runner.isolated_filesystem(temp_dir=tmp_path) as td:
             copy_test_data_directory(ref_path, td)
-            original_dir = load_dir(Path(td))
+            original_dir_contents = load_dir(Path(td))
             runner.invoke(Add.add, ['abc'])
-            assert original_dir == load_dir(Path(td))
+            new_dir_contents = load_dir(Path(td))
+            assert original_dir_contents == new_dir_contents
             mock_download_file.assert_not_called()

@@ -38,7 +38,7 @@ class Apply:
             for asset_type, path in config.get_asset_paths().items():
                 temp_asset_path = Path(tmpdir) / asset_type.value
                 os.mkdir(temp_asset_path)
-                copy(path, Path(temp_asset_path), ['*'], [])
+                copy(path, Path(temp_asset_path), include=['*'], exclude=[])
 
                 lockfile_assets_multikey_dict = lockfile.get_assets_by_type(
                     asset_type)
