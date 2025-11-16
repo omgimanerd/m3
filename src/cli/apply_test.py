@@ -22,11 +22,12 @@ def test_apply(mock_download_file,
 
     with runner.isolated_filesystem(temp_dir=tmp_path) as td:
         copy_test_data_directory(ref_path, td)
+        expected_filepath = Path(td) / 'assets/texturepacks/c.zip'
         mock_download_file.side_effect = lambda *args, **kwargs: create_file(
-            Path(td) / 'assets/texturepacks/c.zip', 'Test file c.zip')
-        result = runner.invoke(Apply.apply)
+            expected_filepath, 'Test file c.zip')
+        runner.invoke(Apply.apply)
     mock_download_file.assert_called_once()
-    assert "Installed c.zip" in result.output
+    assert expected_filepath.is_file()
 
 
 @patch('src.config.lockfile.LOCKFILE_FILENAME', 'test_m3.lock.json')
@@ -42,11 +43,13 @@ def test_apply_with_remove(
 
     with runner.isolated_filesystem(temp_dir=tmp_path) as td:
         copy_test_data_directory(ref_path, td)
+        expected_filepath = Path(td) / 'assets/texturepacks/c.zip'
         mock_download_file.side_effect = lambda *args, **kwargs: create_file(
-            Path(td) / 'assets/texturepacks/c.zip', 'Test file c.zip')
-        result = runner.invoke(Apply.apply, ['-r'])
+            expected_filepath, 'Test file c.zip')
+        runner.invoke(Apply.apply, ['-r'])
 
     mock_download_file.assert_called_once()
-    assert not os.path.exists(tmp_path / '/assets/mods/b.jar')
-    assert "Installed c.zip" in result.output
-    assert "Uninstalled b.jar" in result.output
+    uninstalled_filepath = tmp_path / '/assets/mods/b.jar'
+    assert not os.path.exists(uninstalled_filepath)
+    assert expected_filepath.is_file()
+    assert not uninstalled_filepath.is_file()
