@@ -1,11 +1,18 @@
 """add subcommand module"""
 
+import glob
+import shutil
+import tempfile
+from pathlib import Path
+
 import click
 
 from src.api.apikey import get_api_key
 from src.api.wrappers.cf_wrapper import CurseForgeWrapper
 from src.config.lockfile_entry import LockfileEntry
+from src.lib.copy import copy
 from src.lib.lockfile_context_manager import M3ContextManager
+from src.lib.overwrite import overwrite_dir
 from src.util.asset_management import install_asset
 from src.util.click import command_with_aliases
 
@@ -42,15 +49,23 @@ class Add:
                         proj_data, asset_data)
                     asset_path = context.config.get_asset_paths()[
                         asset_lf_entry.asset_type]
-                    installed = install_asset(
-                        asset_lf_entry, asset_path)
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        copy(asset_path, Path(tmpdir),
+                             ['*'], [])
+                        installed = install_asset(
+                            asset_lf_entry, Path(tmpdir))
+                        overwrite_dir(asset_path, tmpdir)
                     context.lockfile.add_entry(asset_lf_entry)
                     click.echo(f'Installed {installed}')
                 except ValueError as error:
                     raise click.ClickException(error)
                 except FileNotFoundError as error:
                     raise click.ClickException(
-                        'An error occurred while checking hash of installed file: ' +
+                        'File not found: ' +
                         error)
+                except (shutil.Error, FileExistsError, OSError) as error:
+                    raise click.ClickException(
+                        'An error occurred when attempting to copy project ' +
+                        'state changes: ' + error)
             else:
                 click.echo(INVALID_FILE_ID_ERROR_MSG)
