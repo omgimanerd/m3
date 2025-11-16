@@ -42,41 +42,6 @@ def hash_response_content(response: requests.Response, alg: HashAlg) -> str:
     return hasher.hexdigest()
 
 
-def hash_update_from_file(
-        filename: Path, hasher: 'hashlib._Hash') -> 'hashlib._Hash':
-    """Updates a given hash with the hash from the given file."""
-    if filename.is_file():
-        with open(filename, 'rb') as f:
-            for chunk in iter(lambda: f.read(65536), b""):
-                hasher.update(chunk)
-    return hasher
-
-
-def hash_dir(dir_: Path, alg: HashAlg) -> str:
-    """Returns a dict containing hashes of all files in a given directory.
-
-    The dict is indexed by the hashes of the files. Each file hash will be keyed
-    to a dict that contains that hash and the file name.
-
-    Args:
-        dir_: The directory to look for files to hash
-        alg: The hashing algorithm to use
-
-    Returns:
-        A dict indexed by the file hash containing the file hash and file name.
-    """
-    def _hash_dir(dir_: Path, hasher: 'hashlib._Hash') -> 'hashlib._Hash':
-        for path in sorted(dir_.iterdir(), key=lambda p: str(p).lower()):
-            hasher.update(path.name.encode())
-            if path.is_file():
-                hasher = hash_update_from_file(path, hasher)
-            elif path.is_dir():
-                hasher = _hash_dir(path, hasher)
-        return hasher
-    hasher = _hash_dir(dir_, hashlib.new(alg.value))
-    return hasher.hexdigest()
-
-
 def hash_asset_dir(dir_: Path, alg: HashAlg) -> dict[str, str]:
     """Returns a dict containing hashes of all .jar and .zip files in the given
     directory.
