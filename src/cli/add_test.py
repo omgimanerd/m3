@@ -9,8 +9,7 @@ from src.api.wrappers.cf_wrapper import CurseForgeWrapper
 from src.cli.add import Add
 from src.config.lockfile_entry import LockfileEntry
 from src.lib.asset import CurseForgeAsset
-from src.util.enum import AssetType, HashAlg, Platform, Side
-from src.util.hash import hash_dir
+from src.util.enum import AssetType, Platform, Side
 
 FILE_ID_FOR_TEST = 17
 MOD_ID_FOR_TEST = 71
@@ -62,7 +61,7 @@ class AddTest:
     @patch('src.util.asset_management.download_file')
     def test_add_invalid_file_id_format(
             self, mock_download_file, copy_test_data_directory, current_dir,
-            tmp_path, dir_not_modified):
+            tmp_path, load_dir):
         """Tests that the add command displays an error message to the user when
         provided with a non-numerical file ID."""
         ref_path = current_dir / 'testdata/'
@@ -70,7 +69,7 @@ class AddTest:
 
         with runner.isolated_filesystem(temp_dir=tmp_path) as td:
             copy_test_data_directory(ref_path, td)
-            original_dir_hash = hash_dir(Path(td), HashAlg.SHA256)
+            original_dir = load_dir(Path(td))
             runner.invoke(Add.add, ['abc'])
-            assert dir_not_modified(Path(td), original_dir_hash, HashAlg.SHA256)
+            assert original_dir == load_dir(Path(td))
             mock_download_file.assert_not_called()
