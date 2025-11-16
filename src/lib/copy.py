@@ -13,9 +13,9 @@ def _is_excluded(path: Path, exclude: list[Path]):
     return False
 
 
-def copy(root: Path, dest: Path, include: list[Path], exclude: list[Path],
+def copy(root: Path, dest: Path, include: list[str], exclude: list[Path],
          callback: Optional[Callable[[str], None]] = None):
-    """Copies all of the include patterns rooted at root into destination,
+    """Recursively copies all of the include patterns rooted at root into destination,
     excluding any files that match the exclusion pattern.
 
     Args:
@@ -28,7 +28,7 @@ def copy(root: Path, dest: Path, include: list[Path], exclude: list[Path],
             is copied, can be used to provide logging or other functionality
     """
     for pattern in include:
-        for path in root.glob(pattern):
+        for path in root.rglob(pattern):
             relative = path.relative_to(root)
             if path.is_dir():
                 continue
