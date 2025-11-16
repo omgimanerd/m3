@@ -5,12 +5,9 @@ import os
 import shutil
 from collections import OrderedDict
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable
 
 import pytest
-
-from src.util.enum import HashAlg
-from src.util.hash import hash_dir
 
 # Fixtures defined in modules in this project.
 # pylint: disable-next=invalid-name
