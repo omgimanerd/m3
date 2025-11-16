@@ -52,8 +52,10 @@ class AddTest:
         with runner.isolated_filesystem(temp_dir=tmp_path) as td:
             copy_test_data_directory(ref_path, td)
             expected_filepath = Path(td) / 'assets/mods/d.jar'
-            mock_download_file.side_effect = lambda *args, **kwargs: create_file(
-                expected_filepath, 'Test file d.jar')
+
+            def _mock_download_file(*args, **kwargs):
+                create_file(expected_filepath, 'Test file d.jar')
+            mock_download_file.side_effect = _mock_download_file
             runner.invoke(Add.add, [str(FILE_ID_FOR_TEST)])
             mock_download_file.assert_called_once()
             assert expected_filepath.is_file()

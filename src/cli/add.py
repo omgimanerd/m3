@@ -62,10 +62,10 @@ class Add:
                 except FileNotFoundError as error:
                     raise click.ClickException(
                         'File not found: ' +
-                        error)
+                        str(error))
                 except (shutil.Error, FileExistsError, OSError) as error:
                     raise click.ClickException(
                         'An error occurred when attempting to copy project ' +
-                        'state changes: ' + error)
+                        'state changes: ' + str(error))
             else:
                 click.echo(INVALID_FILE_ID_ERROR_MSG)
