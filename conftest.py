@@ -65,27 +65,17 @@ def create_file() -> Callable[[Path], Path]:
 
 
 @pytest.fixture
-def dir_not_modified() -> Callable[[Path, str,
-                                   Optional[HashAlg]],
-                                   bool]:
-    """Test fixture that returns a function to check if a given directory has
-    been modified based on a hash computed of the initial directory state."""
-    def _dir_not_modified(
-            dir_: Path, original_dir_hash: str,
-            alg: HashAlg = HashAlg.SHA256):
-        curr_dir_hash = hash_dir(dir_, alg)
-        return curr_dir_hash == original_dir_hash
-    return _dir_not_modified
-
-
-@pytest.fixture
 def load_dir() -> Callable[[Path], OrderedDict]:
     """Test fixtures that walks the given directory recursively and loads every
     file in the directory into an ordered dict."""
     def _load_dir(dir_: Path) -> OrderedDict:
         d = OrderedDict()
         for f in sorted(dir_.rglob("*")):
-            with open(f, "r", encoding="utf-8") as contents:
-                d[f] = contents.read()
+            try:
+                if Path(f).is_file():
+                    with open(f, "r", encoding="utf-8") as contents:
+                        d[f] = contents.read()
+            except UnicodeDecodeError:
+                continue
         return d
     return _load_dir
