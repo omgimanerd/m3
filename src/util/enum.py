@@ -35,9 +35,3 @@ class HashAlg(Enum):
     SHA256 = 'sha256'
     SHA512 = 'sha512'
     MD5 = 'md5'
-
-
-class AssetStatus(Enum):
-    """Asset status indicating its state in the current project."""
-    INSTALLED = 'installed'
-    ERROR_INSTALL = 'error_install'

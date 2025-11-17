@@ -9,7 +9,6 @@ from click import ClickException
 
 from src.config.lockfile_entry import LockfileEntry
 from src.lib.multikey_dict import MultiKeyDict
-from src.util.enum import AssetStatus
 from src.util.web import download_file
 
 
@@ -45,16 +44,16 @@ def install_asset(
 
 def install_assets(
         lockfile_entries: list[LockfileEntry],
-        asset_path: Path) -> dict[str, list[str]]:
+        asset_path: Path) -> list[str]:
     """Given a list of assets to install, installs the assets to the asset
     path."""
-    result = {AssetStatus.INSTALLED: [], AssetStatus.ERROR_INSTALL: []}
+    result = []
     for entry in lockfile_entries:
         try:
-            result[AssetStatus.INSTALLED].append(
+            result.append(
                 install_asset(entry, asset_path))
         except (requests.HTTPError, ValueError) as error:
-            result[AssetStatus.ERROR_INSTALL].append(str(error))
+            raise error
     return result
 
 
