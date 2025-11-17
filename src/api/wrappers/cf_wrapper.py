@@ -119,4 +119,15 @@ class CurseForgeWrapper:  # pylint: disable=too-few-public-methods
             body={
                 "fileIds": file_ids,
             },
-            unpacker=lambda json: CFGetFilesResponse(**json))
+            unpacker=lambda json: CFGetFilesResponse(**json)).data
+
+    def get_asset_file(self, file_id) -> CFFile:
+        """Return a CFFile object containing file metadata.
+
+        Args:
+            file_id: The CurseForge file ID to query
+
+        Returns:
+            A CFFile object.
+        """
+        return self.get_asset_files([file_id])[0]
