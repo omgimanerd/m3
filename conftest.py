@@ -3,11 +3,14 @@
 import json
 import os
 import shutil
+import tempfile
 from collections import OrderedDict
 from pathlib import Path
 from typing import Callable
 
 import pytest
+
+from src.config.config import Config
 
 # Fixtures defined in modules in this project.
 # pylint: disable-next=invalid-name
@@ -40,6 +43,18 @@ def read_json_file() -> Callable[[Path], dict]:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     return _read_json_file
+
+
+@pytest.fixture
+def setup_asset_dir(tmp_path) -> Callable[[Path], Path]:
+    """Test fixture that returns a function to set up a default asset directory
+    structure for testing in the given root path and return the path to the root
+    of the structure."""
+    def _setup_asset_dir(config: Config, dest_path: Path = tmp_path):
+        for _, asset_path in config.paths.get().items():
+            os.makedirs(dest_path / asset_path, exist_ok=True)
+        return dest_path
+    return _setup_asset_dir
 
 
 @pytest.fixture
@@ -78,3 +93,11 @@ def load_dir() -> Callable[[Path], OrderedDict]:
                 continue
         return d
     return _load_dir
+
+
+@pytest.fixture
+def create_tmpdir() -> Callable[[Path], Path]:
+    """Test fixture that creates a temporary directory with the specified path."""
+    def _create_tmpdir(dir_: Path) -> Path:
+        return os.makedirs(dir_, exist_ok=True)
+    return _create_tmpdir

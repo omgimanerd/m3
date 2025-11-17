@@ -1,6 +1,7 @@
 """add subcommand module"""
 
 import glob
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -38,34 +39,39 @@ class Add:
         with M3ContextManager() as context:
             if context.config is None or context.lockfile is None:
                 raise click.ClickException('Not an m3 project')
-            if identifier.isdigit():
-                try:
-                    cf_identifier = int(identifier)
-                    cf_client = CurseForgeWrapper(get_api_key())
-                    asset_data = cf_client.get_asset_files(
-                        [cf_identifier]).data[0]
-                    proj_data = cf_client.get_mod(asset_data.modId).data
-                    asset_lf_entry = LockfileEntry.create_lockfile_entry_from_resp_obj(
-                        proj_data, asset_data)
-                    asset_path = context.config.get_asset_paths()[
-                        asset_lf_entry.asset_type]
-                    with tempfile.TemporaryDirectory() as tmpdir:
-                        copy(asset_path, Path(tmpdir),
-                             ['*'], [])
-                        installed = install_asset(
-                            asset_lf_entry, Path(tmpdir))
-                        overwrite_dir(asset_path, tmpdir)
-                    context.lockfile.add_entry(asset_lf_entry)
-                    click.echo(f'Installed {installed}')
-                except ValueError as error:
-                    raise click.ClickException(error)
-                except FileNotFoundError as error:
-                    raise click.ClickException(
-                        'File not found: ' +
-                        str(error))
-                except (shutil.Error, FileExistsError, OSError) as error:
-                    raise click.ClickException(
-                        'An error occurred when attempting to copy project ' +
-                        'state changes: ' + str(error))
-            else:
+            if not identifier.isdigit():
                 click.echo(INVALID_FILE_ID_ERROR_MSG)
+                return
+
+            try:
+                cf_identifier = int(identifier)
+                cf_client = CurseForgeWrapper(get_api_key())
+                asset_data = cf_client.get_asset_files(
+                    [cf_identifier]).data[0]
+                proj_data = cf_client.get_mod(asset_data.modId).data
+                asset_lf_entry = LockfileEntry.create_lockfile_entry_from_resp_obj(
+                    proj_data, asset_data)
+                asset_path = context.config.get_asset_paths()[
+                    asset_lf_entry.asset_type]
+
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    temp_asset_path = Path(
+                        tmpdir) / context.config.paths.get()[asset_lf_entry.asset_type]
+                    os.makedirs(temp_asset_path, exist_ok=True)
+                    copy(asset_path, Path(temp_asset_path),
+                         include=['*'], exclude=[])
+                    installed = install_asset(
+                        asset_lf_entry, Path(temp_asset_path))
+                    overwrite_dir(asset_path, temp_asset_path)
+                context.lockfile.add_entry(asset_lf_entry)
+                click.echo(f'Installed {installed}')
+            except ValueError as error:
+                raise click.ClickException(error)
+            except FileNotFoundError as error:
+                raise click.ClickException(
+                    'File not found: ' +
+                    str(error))
+            except (shutil.Error, FileExistsError, OSError) as error:
+                raise click.ClickException(
+                    'An error occurred when attempting to copy project ' +
+                    'state changes: ' + str(error))
