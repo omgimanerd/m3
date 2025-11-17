@@ -46,22 +46,29 @@ class Add:
             try:
                 cf_identifier = int(identifier)
                 cf_client = CurseForgeWrapper(get_api_key())
-                asset_data = cf_client.get_asset_files(
-                    [cf_identifier]).data[0]
+                asset_data = cf_client.get_asset_file(
+                    cf_identifier)
                 proj_data = cf_client.get_mod(asset_data.modId).data
                 asset_lf_entry = LockfileEntry.create_lockfile_entry_from_resp_obj(
                     proj_data, asset_data)
                 asset_path = context.config.get_asset_paths()[
                     asset_lf_entry.asset_type]
 
+                # Use a temp filesystem and make all changes in the temp fs so
+                # that if any errors occur, it does not impact the real
+                # filesystem. Makes this command's operation atomic.
                 with tempfile.TemporaryDirectory() as tmpdir:
                     temp_asset_path = Path(
                         tmpdir) / context.config.paths.get()[asset_lf_entry.asset_type]
+                    # Create asset dir structure matching real fs in temp fs
                     os.makedirs(temp_asset_path, exist_ok=True)
                     copy(asset_path, Path(temp_asset_path),
                          include=['*'], exclude=[])
                     installed = install_asset(
                         asset_lf_entry, Path(temp_asset_path))
+
+                    # Overwrite the contents of the real fs with the updated
+                    # contents of the temp fs
                     overwrite_dir(asset_path, temp_asset_path)
                 context.lockfile.add_entry(asset_lf_entry)
                 click.echo(f'Installed {installed}')
