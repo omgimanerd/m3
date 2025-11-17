@@ -29,18 +29,25 @@ class ApplyTest:
             copy_test_data_directory(ref_path, td)
             setup_asset_dir(mock_config, Path(td))
 
+            # Expected filepath of the asset in the real filesystem
             expected_filepath = Path(
                 td) / asset_paths[AssetType.TEXTURE_PACK] / 'c.zip'
             tmp_dir_path = Path(td) / 'temp'
+            # Expected filepath of the asset in the temp filesystem
             tmp_expected_filepath = tmp_dir_path / \
                 asset_paths[AssetType.TEXTURE_PACK] / 'c.zip'
             create_tmpdir(tmp_dir_path)
 
+            # Patch creation of the temp filesystem to make the root of the
+            # temp filesystem predictable and match the path we expect
             with patch('tempfile.TemporaryDirectory') as mock_tmpdir:
                 mock_tmpdir_context = MagicMock()
                 mock_tmpdir_context.__enter__.return_value = tmp_dir_path
                 mock_tmpdir.return_value = mock_tmpdir_context
 
+                # side_effect requires a callable but we need to set the args
+                # of this side_effect here in the test.
+                # Use wrapper function to construct a callable with the args.
                 def _mock_download_file(*args, **kwargs):
                     create_file(
                         tmp_expected_filepath, 'Test file c.zip')
@@ -48,7 +55,7 @@ class ApplyTest:
                 result = runner.invoke(Apply.apply)
         mock_download_file.assert_called_once()
         assert expected_filepath.is_file()
-        assert result.exit_code == 0
+        assert result.exit_code == 0  # Prevents silent failures of test
 
     @patch('src.util.asset_management.download_file')
     def test_apply_with_remove(
@@ -67,18 +74,25 @@ class ApplyTest:
             copy_test_data_directory(ref_path, td)
             setup_asset_dir(mock_config, Path(td))
 
+            # Expected filepath of the asset in the real filesystem
             expected_filepath = Path(
                 td) / asset_paths[AssetType.TEXTURE_PACK] / 'c.zip'
             tmp_dir_path = Path(td) / 'temp'
+            # Expected filepath of the asset in the temp filesystem
             tmp_expected_filepath = tmp_dir_path / \
                 asset_paths[AssetType.TEXTURE_PACK] / 'c.zip'
             create_tmpdir(tmp_dir_path)
 
+            # Patch creation of the temp filesystem to make the root of the
+            # temp filesystem predictable and match the path we expect
             with patch('tempfile.TemporaryDirectory') as mock_tmpdir:
                 mock_tmpdir_context = MagicMock()
                 mock_tmpdir_context.__enter__.return_value = tmp_dir_path
                 mock_tmpdir.return_value = mock_tmpdir_context
 
+                # side_effect requires a callable but we need to set the args
+                # of this side_effect here in the test.
+                # Use wrapper function to construct a callable with the args.
                 def _mock_download_file(*args, **kwargs):
                     create_file(
                         tmp_expected_filepath, 'Test file c.zip')
@@ -89,4 +103,4 @@ class ApplyTest:
         assert not os.path.exists(uninstalled_filepath)
         assert expected_filepath.is_file()
         assert not uninstalled_filepath.is_file()
-        assert result.exit_code == 0
+        assert result.exit_code == 0  # Prevents silent failures of test
