@@ -32,9 +32,14 @@ class Apply:
 
         if config is None or lockfile is None:
             raise click.ClickException('Not an m3 project')
+
+        # Use a temp filesystem and make all changes in the temp fs so that if
+        # any errors occur, it does not impact the real filesystem.
+        # Makes this command's operation atomic.
         with tempfile.TemporaryDirectory() as tmpdir:
             for asset_type, path in config.get_asset_paths().items():
                 temp_asset_path = Path(tmpdir) / config.paths.get()[asset_type]
+                # Create asset dir structure matching real fs in temp fs
                 os.makedirs(temp_asset_path, exist_ok=True)
                 copy(path, Path(temp_asset_path), include=['*'], exclude=[])
 
@@ -59,6 +64,8 @@ class Apply:
                     uninstall_assets(
                         uninstall_queue, temp_asset_path, click.echo)
             for asset_type, path in config.get_asset_paths().items():
+                # Overwrite the contents of the real fs with the updated
+                # contents of the temp fs
                 overwrite_dir(
                     path, (Path(tmpdir) / config.paths.get()[asset_type]))
 
