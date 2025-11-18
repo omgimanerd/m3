@@ -41,14 +41,15 @@ class AddTest:
         mock_asset_hashes = read_json_file(
             current_dir / 'testdata/test_add_file_hashes.json')
         mock_asset = CurseForgeAsset(
-            name="d.jar", display_name="d.jar", platform=Platform.CURSEFORGE,
-            asset_type=AssetType.MOD, side=Side.BOTH, cdn_link="test-cdn-link",
-            dependencies=[],
+            name="d-jar", display_name="d.jar", file_name="d.jar",
+            platform=Platform.CURSEFORGE, asset_type=AssetType.MOD,
+            side=Side.BOTH, cdn_link="test-cdn-link", dependencies=[],
             project_id=MOD_ID_FOR_TEST, file_id=FILE_ID_FOR_TEST)
         mock_create_lockfile_entry_from_resp_obj.return_value = LockfileEntry(
             name=mock_asset.name, display_name=mock_asset.display_name,
-            hash=mock_asset_hashes, platform=mock_asset.platform,
-            asset_type=mock_asset.asset_type, asset=mock_asset)
+            file_name=mock_asset.file_name, hash=mock_asset_hashes,
+            platform=mock_asset.platform, asset_type=mock_asset.asset_type,
+            asset=mock_asset)
 
         mock_config = config_from_path(ref_path / 'test_m3.json')
         asset_paths = mock_config.paths.get()

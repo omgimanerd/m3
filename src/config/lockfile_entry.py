@@ -83,8 +83,10 @@ class HashEntry:
 @dataclass
 class LockfileEntry:
     """Class for defining lockfile entries."""
-    name: str
+    name: str   # internal ID
     display_name: str
+    # TODO: Decide if multikey dicts should be keyed on internal ID or file_name
+    file_name: str
     # TODO: Consider redesigning hash/HashEntry into something simpler
     hash: HashEntry
     platform: Platform
@@ -112,8 +114,9 @@ class LockfileEntry:
                 asset_data)
             return LockfileEntry(
                 name=cf_asset.name, display_name=cf_asset.display_name,
-                hash=asset_hashes, platform=Platform.CURSEFORGE,
-                asset_type=cf_asset.asset_type, asset=cf_asset)
+                file_name=cf_asset.file_name, hash=asset_hashes,
+                platform=Platform.CURSEFORGE, asset_type=cf_asset.asset_type,
+                asset=cf_asset)
         except ValueError as error:
             raise Exception(
                 'Something went wrong while processing data for ' +

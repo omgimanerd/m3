@@ -31,7 +31,7 @@ def evaluate_diff(
 
         for asset_key in missing_asset_set:
             missing_assets.append(
-                lockfile_assets_multikey_dict.get_by_multikey(asset_key).name)
+                lockfile_assets_multikey_dict.get_by_multikey(asset_key).file_name)
 
         for asset_key in new_asset_set:
             new_assets.append(

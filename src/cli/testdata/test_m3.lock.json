@@ -1,8 +1,9 @@
 {
   "entries": {
     "test-entry": {
-      "name": "a.jar",
+      "name": "a-jar",
       "display_name": "a.jar",
+      "file_name": "a.jar",
       "hash": {
         "sha1": "5a68d4de21d014dec4b203f0250a6292b07141bc",
         "sha512": "42b1e318d88d76c2eec1b37f5433dcfecba7d882c4f408dafcf1beb4d5da66f2374b68f455eca1fa29891984b71453a2c43bfc4d5a5b69f5c992144dc97d94ab",
@@ -11,8 +12,9 @@
       "platform": "curseforge",
       "asset_type": "mod",
       "asset": {
-        "name": "a.jar",
+        "name": "a-jar",
         "display_name": "a.jar",
+        "file_name": "a.jar",
         "platform": "curseforge",
         "asset_type": "mod",
         "side": "both",
@@ -23,8 +25,9 @@
       }
     },
     "test-texture-pack": {
-      "name": "c.zip",
+      "name": "c-zip",
       "display_name": "c.zip",
+      "file_name": "c.zip",
       "hash": {
         "sha1": "b170a89f64c06516cfd8691f81024488c83acdfc",
         "sha512": "ab2fc52fb556ee9af6c9be54c68aaafc24268c086a88e2dc1145b342c8c60c7077b2d36d48ae0b83e8e7fce8de4836df68734a0ee7bac23708b1b80cc7c3bf08",
@@ -33,8 +36,9 @@
       "platform": "curseforge",
       "asset_type": "texture_pack",
       "asset": {
-        "name": "c.zip",
+        "name": "c-zip",
         "display_name": "c.zip",
+        "file_name": "c.zip",
         "platform": "curseforge",
         "asset_type": "texture_pack",
         "side": "both",

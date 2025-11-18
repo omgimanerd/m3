@@ -25,9 +25,10 @@ def test_lockfile_read_write(
     l = lockfile_from_path("testdata/test_m3.lock.json")
     assert l == Lockfile(
         entries={
-            "test-entry": LockfileEntry(
-                name="test-entry",
-                display_name="test-entry",
+            "test-mod": LockfileEntry(
+                name="test-mod",
+                display_name="test-mod",
+                file_name="test-mod",
                 hash=HashEntry(
                     sha1="sha1-hash",
                     sha512="sha512-hash",
@@ -38,6 +39,7 @@ def test_lockfile_read_write(
                 asset=Asset(
                     name="test-mod",
                     display_name="test-mod",
+                    file_name="test-mod",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
@@ -50,6 +52,7 @@ def test_lockfile_read_write(
             "test-texture-pack": LockfileEntry(
                 name="test-texture-pack",
                 display_name="test-texture-pack",
+                file_name="test-texture-pack",
                 hash=HashEntry(
                     sha1="sha1-hash-texture",
                     sha512="sha512-hash-texture",
@@ -60,6 +63,7 @@ def test_lockfile_read_write(
                 asset=Asset(
                     name="test-texture-pack",
                     display_name="test-texture-pack",
+                    file_name="test-texture-pack",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.TEXTURE_PACK,
                     side=Side.BOTH,
@@ -84,9 +88,10 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
     lockfile_path = tmp_path / LOCKFILE_FILENAME
     lockfile = Lockfile(
         entries={
-            "test-entry": LockfileEntry(
-                name="test-entry",
-                display_name="test-entry",
+            "test-mod": LockfileEntry(
+                name="test-mod",
+                display_name="test-mod",
+                file_name="test-mod",
                 hash=HashEntry(
                     sha1="sha1-hash",
                     sha512="sha512-hash",
@@ -97,6 +102,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 asset=Asset(
                     name="test-mod",
                     display_name="test-mod",
+                    file_name="test-mod",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.MOD,
                     side=Side.BOTH,
@@ -109,6 +115,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
             "test-texture-pack": LockfileEntry(
                 name="test-texture-pack",
                 display_name="test-texture-pack",
+                file_name="test-texture-pack",
                 hash=HashEntry(
                     sha1="sha1-hash-texture",
                     sha512="sha512-hash-texture",
@@ -119,6 +126,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 asset=Asset(
                     name="test-texture-pack",
                     display_name="test-texture-pack",
+                    file_name="test-texture-pack",
                     platform=Platform.CURSEFORGE,
                     asset_type=AssetType.TEXTURE_PACK,
                     side=Side.BOTH,
@@ -135,9 +143,10 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
 
     assert written_json == {
         "entries": {
-            "test-entry": {
-                "name": "test-entry",
-                "display_name": "test-entry",
+            "test-mod": {
+                "name": "test-mod",
+                "display_name": "test-mod",
+                "file_name": "test-mod",
                 "hash": {
                     "sha1": "sha1-hash",
                     "sha512": "sha512-hash",
@@ -148,6 +157,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 "asset": {
                     "name": "test-mod",
                     "display_name": "test-mod",
+                    "file_name": "test-mod",
                     "platform": "curseforge",
                     "asset_type": "mod",
                     "side": "both",
@@ -160,6 +170,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
             "test-texture-pack": {
                 "name": "test-texture-pack",
                 "display_name": "test-texture-pack",
+                "file_name": "test-texture-pack",
                 "hash": {
                     "sha1": "sha1-hash-texture",
                     "sha512": "sha512-hash-texture",
@@ -170,6 +181,7 @@ def test_lockfile_write_read(lockfile_from_path, tmp_path):
                 "asset": {
                     "name": "test-texture-pack",
                     "display_name": "test-texture-pack",
+                    "file_name": "test-texture-pack",
                     "platform": "curseforge",
                     "asset_type": "texture_pack",
                     "side": "both",
@@ -190,10 +202,11 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
     lockfile = lockfile_from_path("testdata/test_m3.lock.json")
     multikey_dict = lockfile.create_multikey_dict_for_lockfile()
     ref_dict = MultiKeyDict(4)
-    ref_dict.add(("test-entry", "md5-hash",
+    ref_dict.add(("test-mod", "md5-hash",
                   "sha1-hash", "sha512-hash",), LockfileEntry(
-        name="test-entry",
-        display_name="test-entry",
+        name="test-mod",
+        display_name="test-mod",
+        file_name="test-mod",
         hash=HashEntry(
             sha1="sha1-hash",
             sha512="sha512-hash",
@@ -204,6 +217,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
         asset=Asset(
             name="test-mod",
             display_name="test-mod",
+            file_name="test-mod",
             platform=Platform.CURSEFORGE,
             asset_type=AssetType.MOD,
             side=Side.BOTH,
@@ -217,6 +231,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
                   "sha1-hash-texture", "sha512-hash-texture", ), LockfileEntry(
         name="test-texture-pack",
         display_name="test-texture-pack",
+        file_name="test-texture-pack",
         hash=HashEntry(
             sha1="sha1-hash-texture",
             sha512="sha512-hash-texture",
@@ -227,6 +242,7 @@ def test_lockfile_multikey_dict_creation(lockfile_from_path):
         asset=Asset(
             name="test-texture-pack",
             display_name="test-texture-pack",
+            file_name="test-texture-pack",
             platform=Platform.CURSEFORGE,
             asset_type=AssetType.TEXTURE_PACK,
             side=Side.BOTH,

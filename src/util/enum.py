@@ -10,6 +10,12 @@ class Platform(Enum):
     MODRINTH = 'modrinth'
 
 
+class PlatformSuffix(Enum):
+    """Suffix to denote platform on internal identifiers of assets."""
+    CURSEFORGE = '-cf'
+    MODRINTH = '-mr'
+
+
 class Side(Enum):
     """Mod required on client-side, server-side, or both.
 

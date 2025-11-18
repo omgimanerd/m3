@@ -42,7 +42,6 @@ class Add:
             if not identifier.isdigit():
                 click.echo(INVALID_FILE_ID_ERROR_MSG)
                 return
-
             try:
                 cf_identifier = int(identifier)
                 cf_client = CurseForgeWrapper(get_api_key())
