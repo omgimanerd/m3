@@ -77,20 +77,20 @@ class Lockfile:
         If the object exists, updates the existing entry in the lockfile with a
         new LockfileEntry object.
         """
-        self.entries[entry.name] = entry
+        self.entries[entry.file_name] = entry
 
     def remove_entry(self, entry: LockfileEntry):
         """Removes a given entry from the lockfile object.
 
         Returns the removed entry, or None if entry was not found.
         """
-        if self.entries.get(entry.name) is not None:
-            return self.entries.pop(entry.name)
+        if self.entries.get(entry.file_name) is not None:
+            return self.entries.pop(entry.file_name)
         return None
 
     def get_entry(self, entry: LockfileEntry):
         """Gets a specified entry from the lockfile object."""
-        return self.entries.get(entry.name)
+        return self.entries.get(entry.file_name)
 
     def reindex_lockfile_entries(
             self, entries: list[LockfileEntry], f_new_key: Callable
@@ -127,7 +127,7 @@ class Lockfile:
         multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
         for entry in self.entries.values():
             if entry.asset_type == asset_type:
-                keys = [entry.name]
+                keys = [entry.file_name]
                 for alg in sorted(HASH_ALGS, key=lambda member: member.value):
                     try:
                         keys.append(entry.hash[alg])
@@ -153,7 +153,7 @@ class Lockfile:
         """
         multikey_dict = MultiKeyDict(len(HASH_ALGS) + 1)
         for entry in self.entries.values():
-            keys = [entry.name]
+            keys = [entry.file_name]
             for alg in sorted(HASH_ALGS, key=lambda member: member.value):
                 try:
                     keys.append(entry.hash[alg])

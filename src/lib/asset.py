@@ -1,6 +1,7 @@
 """Classes for defining assets managed by m3."""
 
 
+import re
 from typing import Union
 
 from packaging.version import InvalidVersion, Version
@@ -8,7 +9,7 @@ from pydantic.dataclasses import dataclass
 
 from src.api.dataclasses.cf_response_objects import CFFile, CFMod
 from src.lib.dataclasses import dataclass_json
-from src.util.enum import AssetType, Platform, Side
+from src.util.enum import AssetType, Platform, PlatformSuffix, Side
 
 
 def is_older_than_version(
@@ -65,22 +66,43 @@ def keyword_in_modules(modules: list[dict], keyword: str) -> bool:
     return any(keyword in module['name'] for module in modules)
 
 
+def generate_internal_id(display_name: str, platform: Platform) -> str:
+    """Generates an internal identifier for m3 to use for an asset given the
+    asset's display name and platform.
+
+    Args:
+        display_name: The display name of the asset platform: CurseForge or
+        Modrinth
+
+    Returns:
+        An alphanumeric internal identifier with no spaces or special characters
+        in lowercase
+    """
+    suffix = PlatformSuffix.CURSEFORGE.value if platform == Platform.CURSEFORGE else PlatformSuffix.MODRINTH.value
+    filtered = re.sub(r'[^a-zA-Z0-9.\- ]', '', display_name)
+    filtered = re.sub(r'[.\-]', ' ', filtered)
+    return filtered.strip().lower().replace(' ', '-') + suffix
+
+
 @dataclass_json
 @dataclass
 class Asset:
     """Class for handling asset data managed by m3.
 
     Attributes:
-        name: The filename of the asset
+        name: The internal identifier of the asset
         display_name: A human-readable name for the asset
+        file_name: The file name of the asset uploaded to the asset Platform
         platform: The platform the asset is for (CurseForge, Modrinth, etc.)
         asset_type: Mod, resource pack, texture pack, or shader pack etc.
         side: Client, server, or both
         cdn_link: The link to download the asset from
         dependencies: A list of assets this asset depends on
     """
-    name: str
+    name: str   # internal ID
     display_name: str
+    # TODO: Decide what layer(s) file_name should live on
+    file_name: str
     platform: Platform
     asset_type: AssetType
     side: Side
@@ -152,16 +174,17 @@ class CurseForgeAsset(Asset):
         """
         asset_type = CurseForgeAsset.identify_cf_asset_type(
             proj_data, asset_data)
+        internal_id = generate_internal_id(
+            asset_data.displayName, Platform.CURSEFORGE)
         # pylint: disable-next=no-value-for-parameter
-        return CurseForgeAsset(name=asset_data.fileName,
-                               display_name=asset_data.displayName,
-                               platform=Platform.CURSEFORGE,
-                               asset_type=asset_type, side=Side.BOTH
-                               if asset_data.isServerPack else Side.CLIENT,
-                               cdn_link=asset_data.downloadUrl,
-                               dependencies=asset_data.dependencies,
-                               project_id=asset_data.modId,
-                               file_id=asset_data.id)
+        return CurseForgeAsset(
+            name=internal_id, display_name=asset_data.displayName,
+            file_name=asset_data.fileName, platform=Platform.CURSEFORGE,
+            asset_type=asset_type, side=Side.BOTH
+            if asset_data.isServerPack else Side.CLIENT,
+            cdn_link=asset_data.downloadUrl,
+            dependencies=asset_data.dependencies, project_id=asset_data.modId,
+            file_id=asset_data.id)
 
 
 @dataclass_json

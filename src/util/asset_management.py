@@ -27,7 +27,7 @@ def install_asset(
     """Installs the given asset to the asset path."""
     try:
         cdn_link = lockfile_entry.asset.cdn_link
-        file_path = asset_path / lockfile_entry.name
+        file_path = asset_path / lockfile_entry.file_name
         file_hashes = lockfile_entry.hash
         download_file(cdn_link, file_path, file_hashes)
         lockfile_entry.hash.populate_hashes(file_path)
@@ -62,7 +62,7 @@ def uninstall_asset(
         asset_path: Path, echo: Callable) -> str:
     """Uninstalls the given asset located at the given path."""
     if isinstance(lockfile_entry, LockfileEntry):
-        file_path = asset_path / lockfile_entry.name
+        file_path = asset_path / lockfile_entry.file_name
         if os.path.exists(file_path):
             os.remove(file_path)
             echo(f'Uninstalled {lockfile_entry.display_name}')
