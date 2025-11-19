@@ -139,7 +139,7 @@ class Lockfile:
                 multikey_dict.add(multikey, entry)
         return multikey_dict
 
-    def create_multikey_dict_for_lockfile(self):
+    def create_multikey_dict_for_lockfile(self) -> MultiKeyDict:
         """Creates a multikey dict containing the lockfile entries, where the
         multikey is the name of the asset and the hashes of the asset file.
 
