@@ -75,13 +75,14 @@ class ListOutputBuilder:
         """Given a list of tuples containing the relevant asset
         data, builds the output for the list command and adjust the width of
         each field according to the minimum width required specified in
-        col_widths.
+        col_widths. Sorts the asset data output in alphabetical order by asset
+        name.
 
         Args:
-            assets: The relevant asset data to print
-            col_widths: The minimum required width for each column of data
-            header_titles: The titles of each column to put in the header
-            asset_type: optional arg to specify asset type in title of output
+            assets: The relevant asset data to print col_widths: The minimum
+            required width for each column of data header_titles: The titles of
+            each column to put in the header asset_type: optional arg to specify
+            asset type in title of output
 
         Returns:
             The output for the list command as a string.
