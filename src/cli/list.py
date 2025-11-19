@@ -104,7 +104,7 @@ class ListOutputBuilder:
         for i, header_name in enumerate(header_titles):
             header += formatter.format(f'{header_name:<{max(len(header_name), col_widths[i]) + 2}}')
         output += '\n' + header
-        for asset in assets:
+        for asset in sorted(assets):
             entry = ''
             for i, asset_data in enumerate(asset):
                 entry += formatter.format(f'{asset_data:<{max(len(header_titles[i]), col_widths[i]) + 2}}')
@@ -114,7 +114,7 @@ class ListOutputBuilder:
 
 
 
-# pylint: disable-next=too-few-public-methods, missing-class-docstring
+# pylint: disable-next=missing-class-docstring
 class List:
     @command_with_aliases('l', 'ls')
     @click.option('-t', '--type', 'type_',
