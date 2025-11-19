@@ -13,7 +13,7 @@ class CustomOutputFormatter(Formatter):
     def format_field(self, value, format_spec):
         padding = (MAX_LINE_LENGTH - len(str(value)) - 2) // 2
         if format_spec == 'title':
-            return ('=' * padding) + ' ' + str(value).upper() + ' ' + ('=' * padding)
+            return f'{('=' * padding)} {str(value).upper()} {('=' * padding)}'
         if format_spec == 'header':
             return str(value).upper()
         if format_spec == 'diff_minus':
