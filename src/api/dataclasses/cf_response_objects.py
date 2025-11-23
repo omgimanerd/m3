@@ -5,9 +5,11 @@ from typing import Optional, Union
 
 from pydantic.dataclasses import dataclass
 
+from src.util.enum import HashAlg
+
 CF_HASH_ALG_MAP = {
-    1: 'sha1',
-    2: 'md5'
+    1: HashAlg.SHA1.value,
+    2: HashAlg.MD5.value
 }
 
 

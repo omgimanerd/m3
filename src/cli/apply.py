@@ -32,7 +32,6 @@ class Apply:
 
         if config is None or lockfile is None:
             raise click.ClickException('Not an m3 project')
-
         # Use a temp filesystem and make all changes in the temp fs so that if
         # any errors occur, it does not impact the real filesystem.
         # Makes this command's operation atomic.
@@ -49,7 +48,7 @@ class Apply:
                     temp_asset_path, HASH_ALGS)
                 install_queue = create_entry_queue(
                     lockfile_assets_multikey_dict,
-                    lockfile_assets_multikey_dict.get_multikey_difference(
+                    lockfile_assets_multikey_dict.get_multikey_difference_asymmetric(
                         curr_asset_multikey_dict))
 
                 install_assets(install_queue, temp_asset_path)
@@ -60,9 +59,13 @@ class Apply:
                 if remove:
                     uninstall_queue = create_entry_queue(
                         curr_asset_multikey_dict, curr_asset_multikey_dict.
-                        get_multikey_difference(lockfile_assets_multikey_dict))
+                        get_multikey_difference_asymmetric(
+                            lockfile_assets_multikey_dict))
                     uninstall_assets(
-                        uninstall_queue, temp_asset_path, click.echo)
+                        uninstall_queue, temp_asset_path)
+                    for i in uninstall_queue:
+                        # i will always be a file name from a Path object
+                        click.echo(f'Uninstalled {i}')
             for asset_type, path in config.get_asset_paths().items():
                 # Overwrite the contents of the real fs with the updated
                 # contents of the temp fs

@@ -85,7 +85,6 @@ class LockfileEntry:
     """Class for defining lockfile entries."""
     name: str   # internal ID
     display_name: str
-    # TODO: Decide if multikey dicts should be keyed on internal ID or file_name
     file_name: str
     # TODO: Consider redesigning hash/HashEntry into something simpler
     hash: HashEntry
