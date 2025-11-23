@@ -132,8 +132,27 @@ class MultiKeyDict:
 
     def get_multikey_difference(self, multikey_dict: Self):
         """Returns the set difference of self's multikeys and the given multikey
-        dict's multikeys.
+        dict's multikeys. The multikeys of both dicts must be symmetric.
         """
         base_dict_set = set(self.get_multikeys())
         comparison_dict_set = set(multikey_dict.get_multikeys())
         return base_dict_set.difference(comparison_dict_set)
+
+    def partial_multikey_in_dict(self, multikey: tuple) -> bool:
+        """Returns True if any key in the given multikey exists in this multikey
+        dict. Returns False otherwise."""
+        for key in multikey:
+            if self.is_existing_key(key):
+                return True
+        return False
+
+    def get_multikey_difference_asymmetric(self, multikey_dict: Self):
+        """Returns the set difference of self's multikeys and given multikey
+        dict's multikeys, where multikeys are asymmetric. A multikey exists in
+        both dicts if any one of its keys exists in a multikey in the other
+        dict."""
+        missing_keys = set()
+        for multikey in self.get_multikeys():
+            if not multikey_dict.partial_multikey_in_dict(multikey):
+                missing_keys.add(multikey)
+        return missing_keys

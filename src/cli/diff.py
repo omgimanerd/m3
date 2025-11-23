@@ -24,14 +24,14 @@ def evaluate_diff(
         curr_asset_multikey_dict = hash_asset_dir_multi_hash(
             path, HASH_ALGS)
 
-        missing_asset_set = lockfile_assets_multikey_dict.get_multikey_difference(
+        missing_asset_set = lockfile_assets_multikey_dict.get_multikey_difference_asymmetric(
             curr_asset_multikey_dict)
-        new_asset_set = curr_asset_multikey_dict.get_multikey_difference(
+        new_asset_set = curr_asset_multikey_dict.get_multikey_difference_asymmetric(
             lockfile_assets_multikey_dict)
 
         for asset_key in missing_asset_set:
             missing_assets.append(
-                lockfile_assets_multikey_dict.get_by_multikey(asset_key).file_name)
+                lockfile_assets_multikey_dict.get_by_multikey(asset_key).name)
 
         for asset_key in new_asset_set:
             new_assets.append(

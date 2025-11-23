@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Callable, Union
+from typing import Union
 
 import requests
 from click import ClickException
@@ -59,25 +59,26 @@ def install_assets(
 
 def uninstall_asset(
         lockfile_entry: Union[LockfileEntry, Path],
-        asset_path: Path, echo: Callable) -> str:
-    """Uninstalls the given asset located at the given path."""
+        asset_path: Path) -> str:
+    """Uninstalls the given asset located at the given path and returns the name
+    of the uninstalled asset."""
     if isinstance(lockfile_entry, LockfileEntry):
         file_path = asset_path / lockfile_entry.file_name
         if os.path.exists(file_path):
             os.remove(file_path)
-            echo(f'Uninstalled {lockfile_entry.display_name}')
         return lockfile_entry.display_name
 
     if os.path.exists(lockfile_entry):
         os.remove(lockfile_entry)
-        echo(f'Uninstalled {lockfile_entry.name}')
         return lockfile_entry.name
 
 
 def uninstall_assets(
         lockfile_entries: list[LockfileEntry],
-        asset_path: Path, echo: Callable):
+        asset_path: Path) -> list[str]:
     """Given a list of assets to uninstall, removes the assets from the asset
-    path."""
+    path and returns a list of asset names that were uninstalled."""
+    result = []
     for entry in lockfile_entries:
-        uninstall_asset(entry, asset_path, echo)
+        result.append(uninstall_asset(entry, asset_path))
+    return result
