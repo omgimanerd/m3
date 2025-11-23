@@ -19,7 +19,7 @@ from src.util.click import command_with_aliases
 INVALID_FILE_ID_ERROR_MSG = 'Not a valid identifier. Currently only support CurseForge modpacks'
 
 
-# pylint: disable-next=too-few-public-methods, missing-class-docstring
+# pylint: disable-next=missing-class-docstring
 class Add:
     @command_with_aliases('a', 'install', 'i', no_args_is_help=True,
                           short_help='Installs assets into the project.')
